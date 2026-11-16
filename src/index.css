@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+/* Barvy, písmo a animace webu */
+@theme {
+  --color-primary: #92d050;
+  --color-dark: #242222;
+  --color-bgLight: #f1f5f9;
+  --color-textMain: #595959;
+  --color-textLight: #a6a6a6;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  --animate-marquee: marquee 35s linear infinite;
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}

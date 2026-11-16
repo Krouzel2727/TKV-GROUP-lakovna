@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="%SITE_LANG%">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/src/assets/TKV_icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Hodnoty %SITE_…% se doplňují ze src/config/siteData.ts (sekce meta) – viz vite.config.ts -->
+    <!-- Primary Meta Tags -->
+    <title>%SITE_PAGE_TITLE%</title>
+    <meta name="title" content="%SITE_TITLE%" />
+    <meta name="description" content="%SITE_DESCRIPTION%" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="%SITE_URL%" />
+    <meta property="og:title" content="%SITE_TITLE%" />
+    <meta property="og:description" content="%SITE_DESCRIPTION%" />
+    <meta property="og:image" content="%SITE_OG_IMAGE%" />
+
+    <!-- X (Twitter) -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="%SITE_URL%" />
+    <meta property="twitter:title" content="%SITE_TITLE%" />
+    <meta property="twitter:description" content="%SITE_DESCRIPTION%" />
+    <meta property="twitter:image" content="%SITE_OG_IMAGE%" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
