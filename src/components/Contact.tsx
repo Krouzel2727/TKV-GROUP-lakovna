@@ -1,6 +1,6 @@
-import { useRef, useState, type FormEvent } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
-import HCaptcha from '@hcaptcha/react-hcaptcha';
+import type HCaptchaType from '@hcaptcha/react-hcaptcha';
 import { FaPhone } from 'react-icons/fa';
 import { FaMapLocationDot } from 'react-icons/fa6';
 import { siteData } from '../config/siteData';
@@ -9,6 +9,9 @@ import { fadeInUp } from '../utils/animations';
 // Klíče jsou v souboru .env (viz .env.example)
 const WEB3FORMS_ACCESS_KEY = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY ?? '';
 const HCAPTCHA_SITE_KEY = import.meta.env.VITE_HCAPTCHA_SITE_KEY ?? '';
+
+// hCaptcha (cca 100 kB + skripty třetí strany) se načte až ve chvíli, kdy se návštěvník blíží k formuláři
+const HCaptcha = lazy(() => import('@hcaptcha/react-hcaptcha'));
 
 const inputClass =
   'w-full px-4 py-3 rounded-lg bg-bgLight border-none focus:ring-2 focus:ring-primary outline-none transition-shadow';
@@ -20,8 +23,23 @@ const Contact = () => {
 
   const [result, setResult] = useState('');
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const captchaRef = useRef<HCaptcha>(null);
+  const captchaRef = useRef<HCaptchaType>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const formWrapRef = useRef<HTMLDivElement>(null);
+  const [loadCaptcha, setLoadCaptcha] = useState(false);
+
+  useEffect(() => {
+    const el = formWrapRef.current;
+    if (!el || loadCaptcha) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) setLoadCaptcha(true);
+      },
+      { rootMargin: '600px 0px' },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [loadCaptcha]);
 
   const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contacts.hala1.adres)}`;
 
@@ -104,7 +122,7 @@ const Contact = () => {
                   className="text-textMain font-medium hover:text-primary transition-colors inline-block"
                   title={cs.navigateTitle}
                 >
-                  <FaMapLocationDot />
+                  <FaMapLocationDot aria-hidden="true" />
                 </a>
               </div>
               <div className="flex-1 w-full">
@@ -158,7 +176,7 @@ const Contact = () => {
                 className="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-primary flex items-center gap-6"
               >
                 <div className="bg-primary/10 p-4 rounded-full text-primary text-2xl shrink-0">
-                  <FaPhone />
+                  <FaPhone aria-hidden="true" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-primary mb-1">{person.name}</h3>
@@ -195,30 +213,31 @@ const Contact = () => {
             />
           </div>
 
-          <div id="formular" className="p-5 sm:p-10 lg:p-14 scroll-mt-24 w-full">
+          <div id="formular" ref={formWrapRef} className="p-5 sm:p-10 lg:p-14 scroll-mt-24 w-full">
             <h3 className="text-2xl font-bold text-primary mb-6">{cs.formTitle}</h3>
-            <form ref={formRef} onSubmit={onSubmit} className="space-y-6">
+            <form ref={formRef} onSubmit={onSubmit} onFocus={() => setLoadCaptcha(true)} className="space-y-6">
               <input type="hidden" name="access_key" value={WEB3FORMS_ACCESS_KEY} />
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className={labelClass}>{cs.labels.name}</label>
-                  <input type="text" name="name" required className={inputClass} placeholder={cs.placeholders.name} />
+                  <label htmlFor="f-name" className={labelClass}>{cs.labels.name}</label>
+                  <input id="f-name" type="text" name="name" autoComplete="name" required className={inputClass} placeholder={cs.placeholders.name} />
                 </div>
                 <div>
-                  <label className={labelClass}>{cs.labels.phone}</label>
-                  <input type="tel" name="phone" className={inputClass} placeholder={cs.placeholders.phone} />
+                  <label htmlFor="f-phone" className={labelClass}>{cs.labels.phone}</label>
+                  <input id="f-phone" type="tel" name="phone" autoComplete="tel" className={inputClass} placeholder={cs.placeholders.phone} />
                 </div>
               </div>
 
               <div>
-                <label className={labelClass}>{cs.labels.email}</label>
-                <input type="email" name="email" required className={inputClass} placeholder={cs.placeholders.email} />
+                <label htmlFor="f-email" className={labelClass}>{cs.labels.email}</label>
+                <input id="f-email" type="email" name="email" autoComplete="email" required className={inputClass} placeholder={cs.placeholders.email} />
               </div>
 
               <div>
-                <label className={labelClass}>{cs.labels.message}</label>
+                <label htmlFor="f-message" className={labelClass}>{cs.labels.message}</label>
                 <textarea
+                  id="f-message"
                   name="message"
                   rows={4}
                   required
@@ -243,11 +262,25 @@ const Contact = () => {
                 </label>
               </div>
 
-              <div className="w-full overflow-x-auto pb-2">
-                <HCaptcha sitekey={HCAPTCHA_SITE_KEY} onVerify={(token) => setCaptchaToken(token)} ref={captchaRef} />
+              {/* min-h rezervuje místo pro hCaptchu, aby stránka při jejím načtení neposkočila */}
+              <div className="w-full overflow-x-auto pb-2 min-h-[86px]">
+                {loadCaptcha && (
+                  <Suspense fallback={null}>
+                    <HCaptcha
+                      sitekey={HCAPTCHA_SITE_KEY}
+                      languageOverride={siteData.seo.lang}
+                      onVerify={(token) => setCaptchaToken(token)}
+                      ref={captchaRef}
+                    />
+                  </Suspense>
+                )}
               </div>
 
-              {result && <div className={`p-4 rounded-lg text-sm font-bold ${resultClass}`}>{result}</div>}
+              {result && (
+                <div role="status" aria-live="polite" className={`p-4 rounded-lg text-sm font-bold ${resultClass}`}>
+                  {result}
+                </div>
+              )}
 
               <button
                 type="submit"

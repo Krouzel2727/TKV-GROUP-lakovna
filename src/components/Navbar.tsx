@@ -31,17 +31,19 @@ const Navbar = () => {
         }`}
       >
         <div className="container mx-auto px-4 flex justify-between items-center">
-          <a href="#" className="flex-shrink-0 relative z-[60]" onClick={() => setIsOpen(false)}>
+          <a href="/" className="flex-shrink-0 relative z-[60]" onClick={() => setIsOpen(false)}>
             <img
               src={logo}
               alt={siteData.navbar.logoAlt}
-              className="h-10 md:h-14 object-contain transition-all duration-300"
+              width={781}
+              height={196}
+              className="h-10 md:h-14 w-auto object-contain transition-all duration-300"
             />
           </a>
 
           {/* Desktop menu */}
           <div className="hidden md:flex items-center gap-8">
-            <nav className="flex gap-6 font-semibold text-textMain">
+            <nav className="flex gap-6 font-semibold text-textMain" aria-label={siteData.navbar.navLabel}>
               {siteData.nav.map((link) => (
                 <a
                   key={link.label}
@@ -59,6 +61,8 @@ const Navbar = () => {
             className="md:hidden text-2xl text-textMain hover:text-primary transition-colors relative z-[60]"
             onClick={() => setIsOpen(!isOpen)}
             aria-label={siteData.navbar.menuToggleLabel}
+            aria-expanded={isOpen}
+            aria-controls="mobilni-menu"
           >
             {isOpen ? <FaTimes /> : <FaBars />}
           </button>
@@ -82,9 +86,10 @@ const Navbar = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'tween', duration: 0.3, ease: 'easeInOut' }}
+              id="mobilni-menu"
               className="fixed top-0 right-0 h-screen w-3/4 max-w-sm bg-white shadow-2xl z-50 flex flex-col md:hidden pt-28 px-8"
             >
-              <nav className="flex flex-col gap-6 font-bold text-xl text-textMain">
+              <nav className="flex flex-col gap-6 font-bold text-xl text-textMain" aria-label={siteData.navbar.navLabel}>
                 {siteData.nav.map((link, index) => (
                   <motion.a
                     key={link.label}

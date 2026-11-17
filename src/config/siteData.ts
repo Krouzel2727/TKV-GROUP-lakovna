@@ -6,24 +6,57 @@
  *  Komponenty v /src/components si texty berou odsud.
  *
  *  Poznámky:
- *  - Ikony se zadávají názvem z knihovny react-icons (sada "Fa"),
- *    přehled: https://react-icons.github.io/react-icons/icons/fa/
+ *  - Ikony se zadávají názvem ze seznamu v src/components/icons.ts
+ *    (při použití nové ikony ji tam stačí přidat).
  *  - V odstavcích sekce "Rozšiřujeme výrobu" lze použít <strong>…</strong>
  *    pro zvýraznění textu.
- *  - Meta tagy (SEO) z části `meta` se při buildu propisují do index.html.
+ *  - Část `seo` se při buildu propisuje do index.html (meta tagy,
+ *    strukturovaná data pro Google/Seznam), robots.txt a sitemap.xml.
  *  - Klíče formuláře (Web3Forms, hCaptcha) jsou v souboru .env.
  * ============================================================
  */
 
+import type { IconName } from '../components/icons.ts';
+
 export const siteData = {
-  // --- SEO / meta tagy (propisují se do index.html) ---
-  meta: {
+  // --- SEO (meta tagy, strukturovaná data, sitemap) ---
+  seo: {
     lang: `cs`,
-    pageTitle: `TKV-GROUP | Prášková lakovna`,
+    locale: `cs_CZ`,
+    // Hlavní adresa webu – VŽDY s https://www. a lomítkem na konci (musí odpovídat .htaccess)
+    siteUrl: `https://www.tkvgrouplakovna.cz/`,
+    siteName: `TKV-GROUP Prášková lakovna`,
+    // Titulek v záložce prohlížeče a ve výsledcích vyhledávání (ideálně do 60 znaků)
+    pageTitle: `Prášková lakovna Horní Ředice u Pardubic | TKV-GROUP`,
+    // Titulek pro sdílení na sociálních sítích
     title: `TKV-GROUP | Profesionální prášková lakovna`,
-    description: `Moderní práškové lakování a povrchové úpravy kovů. Zajišťujeme kvalitní, odolný a slitý povrch lakovaných dílců. Sídlíme v Horních Ředicích.`,
-    url: `https://www.tkvgrouplakovna.cz/`,
-    ogImage: `https://www.tkvgrouplakovna.cz/og-image.jpg`,
+    // Popis ve výsledcích vyhledávání (ideálně 120–160 znaků)
+    description: `Práškové lakování kovů v Horních Ředicích u Pardubic. Ocel, hliník, nerez i pozink, dílce až 6,1 m, celý vzorník RAL a vlastní doprava. Nezávazná poptávka.`,
+    keywords: `prášková lakovna, práškové lakování, lakování kovů, lakovna Pardubice, lakování RAL, Horní Ředice, Holice, Hradec Králové`,
+    ogImage: `og-image.jpg`, // soubor v /public, rozměr 1200 × 630 px
+    ogImageAlt: `TKV-GROUP – prášková lakovna Horní Ředice`,
+    themeColor: `#242222`,
+    // Strukturovaná data (schema.org) – firma, adresa, otevírací doba
+    business: {
+      legalName: `TKV-group s.r.o.`,
+      phone: `+420607456789`,
+      email: `lakovna@tkv-group.cz`,
+      street: `Horní Ředice 18`,
+      city: `Horní Ředice`,
+      postalCode: `533 75`,
+      region: `Pardubický kraj`,
+      country: `CZ`,
+      latitude: 50.0683696,
+      longitude: 15.9621419,
+      openingDays: [`Monday`, `Tuesday`, `Wednesday`, `Thursday`, `Friday`],
+      opens: `06:00`,
+      closes: `15:00`,
+      // Města/oblasti, kde firma působí
+      areaServed: [`Horní Ředice`, `Pardubice`, `Holice`, `Hradec Králové`, `Vysoké Mýto`, `Pardubický kraj`, `Královéhradecký kraj`],
+      services: [`Práškové lakování`, `Odmašťování a předúprava kovů`, `Lakování dle vzorníku RAL`, `Doprava dílců k lakování`],
+      // Další weby firmy (propojení pro vyhledávače)
+      sameAs: [`http://www.tkv-redice.cz`],
+    },
   },
 
   // --- Navigace ---
@@ -36,11 +69,16 @@ export const siteData = {
   navbar: {
     logoAlt: `TKV-GROUP`,
     menuToggleLabel: `Přepnout menu`,
+    navLabel: `Hlavní navigace`,
     mobileCta: `Poptat lakování`,
   },
 
   // --- Úvodní sekce (hero) ---
   hero: {
+    // Fotky na pozadí (názvy souborů ze src/assets/gallery), střídají se po 5 s
+    images: [`IMG_16`, `IMG_14`, `IMG_19`],
+    // Malý řádek nad hlavním nadpisem (součást nadpisu H1 – důležité pro SEO)
+    eyebrow: `Horní Ředice u Pardubic`,
     title: `Prášková lakovna`,
     subtitle: `Práškové lakování je moderní metoda povrchové úpravy kovových materiálů, které zajistí kvalitní, odolný a jednolitý povrch lakovaných dílců.`,
     btnPrimary: `Poptat lakování`,
@@ -48,6 +86,7 @@ export const siteData = {
   },
 
   // --- Služby ---
+  servicesTitle: `Služby práškové lakovny`,
   services: [
     {
       id: 1,
@@ -67,7 +106,7 @@ export const siteData = {
       desc: `V případě potřeby jsme schopni zajistit dopravu dílců k lakování a následně jejich odvezení.`,
       icon: `FaTruck`,
     },
-  ],
+  ] as { id: number; title: string; desc: string; icon: IconName }[],
 
   // --- Technologie (parametry) ---
   techSection: {
@@ -124,8 +163,38 @@ export const siteData = {
     prevLabel: `Předchozí fotky`,
     nextLabel: `Další fotky`,
     goToLabel: `Přejít na posun`, // + číslo, např. "Přejít na posun 3"
-    imageAlt: `Realizace`, // + číslo
-    lightboxAlt: `Zvětšená realizace`, // + číslo
+    openLabel: `Zvětšit fotku`,
+    lightboxClose: `Zavřít náhled`,
+    lightboxPrev: `Předchozí fotka`,
+    lightboxNext: `Další fotka`,
+    // Fotky jsou v src/assets/gallery. Pořadí v galerii = pořadí v tomto seznamu.
+    // "alt" je popis fotky pro vyhledávače a nevidomé – popište, co je na fotce.
+    photos: [
+      { file: `IMG_03`, alt: `Zastřešené posezení s kovovou konstrukcí a pletivem v antracitové barvě` },
+      { file: `IMG_04`, alt: `Hliníková pergola nad terasou restaurace, práškově lakovaná` },
+      { file: `IMG_08`, alt: `Fasáda budovy s kovovým opláštěním v tmavém odstínu` },
+      { file: `IMG_16`, alt: `Modrá ocelová nosná konstrukce skladové haly` },
+      { file: `IMG_15`, alt: `Ocelová skladová plošina se schodištěm v modré barvě` },
+      { file: `IMG_06`, alt: `Modré skladové regály s drátěnými dvířky` },
+      { file: `IMG_18`, alt: `Detail práškově lakovaného regálového profilu` },
+      { file: `IMG_19`, alt: `Lakované kovové police s výsuvnými kolejnicemi` },
+      { file: `IMG_20`, alt: `Detail modře lakovaného ocelového sloupku` },
+      { file: `IMG_17`, alt: `Knihovní regály s práškově lakovanými kovovými díly` },
+      { file: `IMG_01`, alt: `Světle šedé lakované kovové zásuvky a regálový systém` },
+      { file: `IMG_05`, alt: `Bílá hliníková pergola nad terasou rodinného domu` },
+      { file: `IMG_07`, alt: `Pergola s ocelovými sloupy v rezavě hnědém odstínu` },
+      { file: `IMG_09`, alt: `Detail fasády z tahokovu lakovaného ve zlatém odstínu` },
+      { file: `IMG_10`, alt: `Perforovaný plech práškově lakovaný v tyrkysové barvě` },
+      { file: `IMG_11`, alt: `Balkonové zábradlí s tahokovovou výplní v antracitu` },
+      { file: `IMG_12`, alt: `Recepční pult s lakovaným kovovým obkladem` },
+      { file: `IMG_14`, alt: `Modré ocelové schodiště skladové plošiny` },
+      { file: `IMG_21`, alt: `Kovový plot a vjezdová brána v antracitové barvě` },
+      { file: `IMG_22`, alt: `Posuvná brána s perforovanou výplní v antracitu` },
+      { file: `IMG_23`, alt: `Lamelový kovový plot v antracitové barvě` },
+      { file: `IMG_13`, alt: `Bílé lakované kovové konstrukce v interiéru haly` },
+      { file: `IMG_24`, alt: `Expedice lakovaných dílců na návěsu kamionu` },
+      { file: `IMG_02`, alt: `Lakované kovové regály s přihrádkami v černé a žluté` },
+    ],
   },
 
   // --- TOP zákazníci (běžící pás) ---
@@ -226,7 +295,7 @@ export type TechCard = {
   id: number;
   label: string;
   value: string;
-  icon: string;
+  icon: IconName;
   tooltip?: string;
   link?: string;
 };

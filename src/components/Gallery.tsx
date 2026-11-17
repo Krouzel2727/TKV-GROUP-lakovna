@@ -3,38 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronLeft, FaChevronRight, FaTimes } from 'react-icons/fa';
 import { siteData } from '../config/siteData';
 
-import img1 from '../assets/gallery/IMG_01.webp';
-import img2 from '../assets/gallery/IMG_02.webp';
-import img3 from '../assets/gallery/IMG_03.webp';
-import img4 from '../assets/gallery/IMG_04.webp';
-import img5 from '../assets/gallery/IMG_05.webp';
-import img6 from '../assets/gallery/IMG_06.webp';
-import img7 from '../assets/gallery/IMG_07.webp';
-import img8 from '../assets/gallery/IMG_08.webp';
-import img9 from '../assets/gallery/IMG_09.webp';
-import img10 from '../assets/gallery/IMG_10.webp';
-import img11 from '../assets/gallery/IMG_11.webp';
-import img12 from '../assets/gallery/IMG_12.webp';
-import img13 from '../assets/gallery/IMG_13.webp';
-import img14 from '../assets/gallery/IMG_14.webp';
-import img15 from '../assets/gallery/IMG_15.webp';
-import img16 from '../assets/gallery/IMG_16.webp';
-import img17 from '../assets/gallery/IMG_17.webp';
-import img18 from '../assets/gallery/IMG_18.webp';
-import img19 from '../assets/gallery/IMG_19.webp';
-import img20 from '../assets/gallery/IMG_20.webp';
-import img21 from '../assets/gallery/IMG_21.webp';
-import img22 from '../assets/gallery/IMG_22.webp';
-import img23 from '../assets/gallery/IMG_23.webp';
-import img24 from '../assets/gallery/IMG_24.webp';
+import { getImage } from '../utils/images';
 
-// Pořadí fotek v galerii
-const galleryImages = [
-  img3, img4, img8, img16, img15, img6, img18, img19, img20, img17,
-  img1, img5, img7, img9, img10,
-  img11, img12, img14,
-  img21, img22, img23, img13, img24, img2,
-];
+// Fotky a jejich pořadí/popisky se nastavují v siteData.gallerySection.photos
+const galleryImages = siteData.gallerySection.photos.map((photo) => ({
+  ...getImage(photo.file),
+  alt: photo.alt,
+}));
 
 const GAP = 24; // mezera mezi fotkami v px (odpovídá třídě gap-6)
 
@@ -132,17 +107,31 @@ const Gallery = () => {
               }}
               transition={{ type: 'tween', duration: 0.5, ease: 'easeInOut' }}
             >
-              {galleryImages.map((src, idx) => (
+              {galleryImages.map((image, idx) => (
                 <div
                   key={idx}
                   onClick={() => setLightboxIndex(idx)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setLightboxIndex(idx);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`${t.openLabel}: ${image.alt}`}
                   style={{ width: itemWidth > 0 ? itemWidth : '100%' }}
                   className="flex-shrink-0 aspect-square rounded-xl shadow-md cursor-pointer overflow-hidden group bg-gray-200"
                 >
                   <img
-                    src={src}
-                    alt={`${t.imageAlt} ${idx + 1}`}
+                    src={image.src}
+                    srcSet={image.srcSet}
+                    sizes="(min-width: 768px) 360px, 80vw"
+                    width={800}
+                    height={800}
+                    alt={image.alt}
                     loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                 </div>
@@ -183,10 +172,15 @@ const Gallery = () => {
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md p-4"
             onClick={() => setLightboxIndex(null)}
+            role="dialog"
+            aria-modal="true"
+            aria-label={galleryImages[lightboxIndex].alt}
           >
             <button
               className="absolute top-4 md:top-8 right-4 md:right-8 text-white/70 hover:text-primary text-4xl transition-colors z-50"
               onClick={() => setLightboxIndex(null)}
+              aria-label={t.lightboxClose}
+              autoFocus
             >
               <FaTimes />
             </button>
@@ -200,6 +194,7 @@ const Gallery = () => {
                 e.stopPropagation();
                 lightboxPrev();
               }}
+              aria-label={t.lightboxPrev}
               className="absolute left-2 md:left-8 text-white/70 hover:text-primary text-3xl md:text-5xl bg-black/40 hover:bg-black/60 p-3 md:p-4 rounded-full transition-all z-50 shadow-xl"
             >
               <FaChevronLeft />
@@ -211,8 +206,10 @@ const Gallery = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3 }}
-              src={galleryImages[lightboxIndex]}
-              alt={`${t.lightboxAlt} ${lightboxIndex + 1}`}
+              src={galleryImages[lightboxIndex].large}
+              srcSet={galleryImages[lightboxIndex].srcSet}
+              sizes="90vw"
+              alt={galleryImages[lightboxIndex].alt}
               className="max-h-[85vh] max-w-[90vw] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.5)]"
               onClick={(e) => e.stopPropagation()}
             />
@@ -222,6 +219,7 @@ const Gallery = () => {
                 e.stopPropagation();
                 lightboxNext();
               }}
+              aria-label={t.lightboxNext}
               className="absolute right-2 md:right-8 text-white/70 hover:text-primary text-3xl md:text-5xl bg-black/40 hover:bg-black/60 p-3 md:p-4 rounded-full transition-all z-50 shadow-xl"
             >
               <FaChevronRight />

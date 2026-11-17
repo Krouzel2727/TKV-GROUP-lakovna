@@ -26,3 +26,13 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Návštěvníci s vypnutými animacemi v systému */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-marquee {
+    animation-duration: 120s;
+  }
+}

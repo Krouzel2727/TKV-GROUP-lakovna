@@ -5,6 +5,8 @@ import DynamicIcon from './DynamicIcon';
 const Services = () => (
   <section id="sluzby" className="py-20 bg-bgLight">
     <div className="container mx-auto px-4">
+      {/* Nadpis jen pro vyhledávače a čtečky obrazovky (vizuálně skrytý) */}
+      <h2 className="sr-only">{siteData.servicesTitle}</h2>
       <div className="grid md:grid-cols-3 gap-8">
         {siteData.services.map((service, index) => (
           <motion.div

@@ -1,15 +1,14 @@
-import * as FaIcons from 'react-icons/fa';
-import type { IconType } from 'react-icons';
+import { icons, type IconName } from './icons';
 
 type Props = {
-  name: string;
+  name: IconName;
   className?: string;
 };
 
-// Vykreslí ikonu z react-icons/fa podle názvu zadaného v siteData (např. "FaTruck")
+// Vykreslí ikonu podle názvu zadaného v siteData (např. "FaTruck")
 const DynamicIcon = ({ name, className }: Props) => {
-  const Icon = (FaIcons as Record<string, IconType | undefined>)[name];
-  return Icon ? <Icon className={className} /> : null;
+  const Icon = icons[name];
+  return Icon ? <Icon className={className} aria-hidden="true" /> : null;
 };
 
 export default DynamicIcon;
