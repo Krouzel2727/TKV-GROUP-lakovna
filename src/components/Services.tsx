@@ -7,7 +7,7 @@ import { Container, SectionHeader } from './ui';
 const Services = () => (
   <section id="sluzby" className="bg-concrete py-20 sm:py-28">
     <Container>
-      <SectionHeader index="01" eyebrow={siteData.servicesEyebrow} title={siteData.servicesTitle} />
+      <SectionHeader index="01" title={siteData.nav[0].label} />
       <motion.ul
         variants={stagger(0.12)}
         initial="hidden"
@@ -23,10 +23,10 @@ const Services = () => (
           >
             <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-primary transition-transform duration-300 group-hover:scale-x-100" />
             <div className="flex items-start justify-between">
-              <span className="flex h-14 w-14 items-center justify-center rounded-sm bg-primary-soft text-2xl text-primary-strong">
+              <span className="flex h-14 w-14 items-center justify-center rounded-sm bg-ink text-2xl text-primary">
                 <DynamicIcon name={service.icon} />
               </span>
-              <span aria-hidden="true" className="font-display text-5xl font-bold leading-none text-line">
+              <span aria-hidden="true" className="font-display text-5xl font-bold leading-none text-silver/50">
                 {String(index + 1).padStart(2, '0')}
               </span>
             </div>

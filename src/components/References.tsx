@@ -3,13 +3,13 @@ import { Container, Eyebrow } from './ui';
 
 // Běžící pás se zákazníky (seznam je zdvojený kvůli plynulé smyčce, při najetí myší se zastaví)
 const References = () => {
-  const { eyebrow, title, items } = siteData.referencesSection;
+  const { title, items } = siteData.referencesSection;
 
   return (
     <section id="zakaznici" className="overflow-hidden border-y border-line bg-white py-14">
       <Container className="mb-8 flex flex-col items-start gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <Eyebrow>{eyebrow}</Eyebrow>
+          <Eyebrow />
           <h2 className="mt-3 font-display text-3xl font-bold uppercase tracking-tight">{title}</h2>
         </div>
       </Container>

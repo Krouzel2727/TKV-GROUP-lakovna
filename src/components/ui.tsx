@@ -4,7 +4,7 @@ import { fadeInUp } from '../utils/animations';
 
 /**
  * Sdílené stavební prvky designu TKV-GROUP.
- * Stejné komponenty použije i web truhlárny – liší se jen akcentní barvou.
+ * Stejné komponenty i barevnou paletu použije i web truhlárny.
  */
 
 // Rozložení
@@ -12,31 +12,29 @@ export const Container = ({ children, className = '' }: { children: ReactNode; c
   <div className={`mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 ${className}`}>{children}</div>
 );
 
-// Malý popisek nad nadpisem: "01 — Služby"
-export const Eyebrow = ({ index, children, dark = false }: { index?: string; children: ReactNode; dark?: boolean }) => (
+// Značka nad nadpisem: zelená linka + číslo sekce ("— 01"), volitelně krátký text
+export const Eyebrow = ({ index, children, dark = false }: { index?: string; children?: ReactNode; dark?: boolean }) => (
   <p
-    className={`flex items-center gap-3 font-display text-sm font-semibold uppercase tracking-[0.18em] ${
-      dark ? 'text-primary' : 'text-primary-strong'
+    className={`flex items-center gap-3 font-display text-sm font-bold uppercase tracking-[0.18em] ${
+      dark ? 'text-silver' : 'text-body'
     }`}
   >
-    <span aria-hidden="true" className="h-0.5 w-8 bg-primary" />
-    {index && <span className={dark ? 'text-white/50' : 'text-muted'}>{index}</span>}
-    <span>{children}</span>
+    <span aria-hidden="true" className="h-0.5 w-10 bg-primary" />
+    {index && <span aria-hidden="true">{index}</span>}
+    {children && <span className={dark ? 'text-primary' : 'text-ink'}>{children}</span>}
   </p>
 );
 
 type SectionHeaderProps = {
   index?: string;
-  eyebrow: string;
   title: string;
   lead?: string;
   dark?: boolean;
-  align?: 'left' | 'center';
   as?: 'h2' | 'h3';
 };
 
 // Jednotná hlavička sekcí
-export const SectionHeader = ({ index, eyebrow, title, lead, dark = false, align = 'left', as = 'h2' }: SectionHeaderProps) => {
+export const SectionHeader = ({ index, title, lead, dark = false, as = 'h2' }: SectionHeaderProps) => {
   const Heading = as;
   return (
     <motion.div
@@ -44,11 +42,9 @@ export const SectionHeader = ({ index, eyebrow, title, lead, dark = false, align
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: '-60px' }}
-      className={`mb-12 max-w-3xl ${align === 'center' ? 'mx-auto text-center [&>p:first-child]:justify-center' : ''}`}
+      className="mb-12 max-w-3xl"
     >
-      <Eyebrow index={index} dark={dark}>
-        {eyebrow}
-      </Eyebrow>
+      <Eyebrow index={index} dark={dark} />
       <Heading
         className={`mt-4 font-display text-4xl font-bold uppercase leading-[0.95] tracking-tight sm:text-5xl ${
           dark ? 'text-white' : 'text-ink'
@@ -56,7 +52,7 @@ export const SectionHeader = ({ index, eyebrow, title, lead, dark = false, align
       >
         {title}
       </Heading>
-      {lead && <p className={`mt-4 text-lg ${dark ? 'text-white/70' : 'text-muted'}`}>{lead}</p>}
+      {lead && <p className={`mt-4 text-lg ${dark ? 'text-silver' : 'text-body'}`}>{lead}</p>}
     </motion.div>
   );
 };

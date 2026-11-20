@@ -61,7 +61,7 @@ const Gallery = () => {
   return (
     <section id="reference" className="bg-concrete py-20 sm:py-28">
       <Container>
-        <SectionHeader index="04" eyebrow={t.eyebrow} title={t.title} lead={t.lead} />
+        <SectionHeader index="04" title={t.title} />
 
         <ul className="grid grid-flow-dense grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
           {visible.map((image, idx) => (
@@ -132,7 +132,7 @@ const Gallery = () => {
               </span>
               <button
                 type="button"
-                className="flex h-11 w-11 items-center justify-center text-2xl text-white/80 transition-colors hover:text-primary"
+                className="flex h-11 w-11 items-center justify-center text-2xl text-silver transition-colors hover:text-primary"
                 onClick={close}
                 aria-label={t.lightboxClose}
                 autoFocus
@@ -161,7 +161,7 @@ const Gallery = () => {
                   prev();
                 }}
                 aria-label={t.lightboxPrev}
-                className="absolute left-2 hidden h-12 w-12 items-center justify-center rounded-sm bg-white/10 text-xl text-white transition-colors hover:bg-primary hover:text-on-primary sm:left-6 sm:flex"
+                className="absolute left-2 hidden h-12 w-12 items-center justify-center rounded-sm bg-steel text-xl text-white transition-colors hover:bg-primary hover:text-on-primary sm:left-6 sm:flex"
               >
                 <FaChevronLeft />
               </button>
@@ -172,7 +172,7 @@ const Gallery = () => {
                   next();
                 }}
                 aria-label={t.lightboxNext}
-                className="absolute right-2 hidden h-12 w-12 items-center justify-center rounded-sm bg-white/10 text-xl text-white transition-colors hover:bg-primary hover:text-on-primary sm:right-6 sm:flex"
+                className="absolute right-2 hidden h-12 w-12 items-center justify-center rounded-sm bg-steel text-xl text-white transition-colors hover:bg-primary hover:text-on-primary sm:right-6 sm:flex"
               >
                 <FaChevronRight />
               </button>
@@ -183,16 +183,16 @@ const Gallery = () => {
                 type="button"
                 onClick={prev}
                 aria-label={t.lightboxPrev}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm bg-white/10 text-white sm:hidden"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm bg-steel text-white sm:hidden"
               >
                 <FaChevronLeft />
               </button>
-              <p className="flex-1 text-center text-sm text-white/75">{galleryImages[lightboxIndex].alt}</p>
+              <p className="flex-1 text-center text-sm text-silver">{galleryImages[lightboxIndex].alt}</p>
               <button
                 type="button"
                 onClick={next}
                 aria-label={t.lightboxNext}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm bg-white/10 text-white sm:hidden"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm bg-steel text-white sm:hidden"
               >
                 <FaChevronRight />
               </button>

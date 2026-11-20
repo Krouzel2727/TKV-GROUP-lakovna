@@ -20,8 +20,9 @@ import type { IconName } from '../components/icons.ts';
 
 export const siteData = {
   // --- Značka a divize TKV-GROUP ---
-  // brand určuje akcentní barvu webu: 'lakovna' (zelená) | 'truhlarna' (oranžová).
-  // Barvy jsou v src/index.css. Web truhlárny = stejný kód s brand: 'truhlarna'.
+  // Obě divize používají stejnou barevnou paletu TKV-GROUP (src/index.css).
+  // brand určuje, která divize je "tento web" (zvýraznění v přepínači divizí).
+  // Web truhlárny = stejný kód s brand: 'truhlarna' a vlastními texty.
   brand: `lakovna` as Brand,
   groupName: `TKV-GROUP`,
   divisionsLabel: `Divize TKV-GROUP`,
@@ -99,19 +100,12 @@ export const siteData = {
     subtitle: `Práškové lakování je moderní metoda povrchové úpravy kovových materiálů, které zajistí kvalitní, odolný a jednolitý povrch lakovaných dílců.`,
     btnPrimary: `Poptat lakování`,
     btnSecondary: `Kontakt`,
-    // Klíčová fakta pod tlačítky (hodnota + popisek)
-    facts: [
-      { value: `6,1 m`, label: `max. délka dílce` },
-      { value: `300 kg`, label: `max. hmotnost dílce` },
-      { value: `RAL`, label: `celý vzorník barev` },
-      { value: `Doprava`, label: `vlastní autodoprava` },
-    ],
+    // Parametry zobrazené pod tlačítky – čísla karet ze sekce Technologie (techSection.cards)
+    factCardIds: [6, 5, 1, 4],
     slideLabel: `Zobrazit fotku`, // + číslo
   },
 
   // --- Služby ---
-  servicesEyebrow: `Co děláme`,
-  servicesTitle: `Služby práškové lakovny`,
   services: [
     {
       id: 1,
@@ -135,9 +129,7 @@ export const siteData = {
 
   // --- Technologie (parametry) ---
   techSection: {
-    eyebrow: `Kapacita`,
     title: `Technologie`,
-    lead: `Parametry dílců, které zvládneme nalakovat na stávajícím pracovišti.`,
     // Text, který se u karty s odkazem zobrazí před odkazem (např. "Vzorník RAL")
     linkPrefix: `Vzorník `,
     cards: [
@@ -161,7 +153,6 @@ export const siteData = {
 
   // --- Rozšiřujeme výrobu ---
   newHallSection: {
-    eyebrow: `Investice`,
     badge: `Připravujeme`,
     title: `Rozšiřujeme výrobu`,
     subtitle: `Připravujeme nové technologie pro ještě efektivnější a ekologičtější provoz.`,
@@ -187,9 +178,7 @@ export const siteData = {
 
   // --- Galerie (fotky jsou v src/assets/gallery, pořadí v components/Gallery.tsx) ---
   gallerySection: {
-    eyebrow: `Realizace`,
     title: `Reference`,
-    lead: `Výběr z dílců, které prošly naší lakovnou.`,
     initialCount: 9, // kolik fotek je vidět před kliknutím na "Zobrazit všechny"
     showAll: `Zobrazit všechny fotky`, // + počet
     showLess: `Zobrazit méně`,
@@ -229,7 +218,6 @@ export const siteData = {
 
   // --- TOP zákazníci (běžící pás) ---
   referencesSection: {
-    eyebrow: `Důvěřují nám`,
     title: `TOP Zákazníci`,
     items: [
       { name: `Perfolinea`, url: `https://shop.perfolinea.cz/` },
@@ -248,8 +236,6 @@ export const siteData = {
 
   // --- Odkaz na truhlárnu ---
   ctaSection: {
-    brand: `truhlarna` as Brand, // sekce se zobrazí v barvách této divize
-    eyebrow: `TKV-GROUP · Truhlárna`,
     title: `Hledáte kvalitní truhlářské práce?`,
     subtitle: `Kromě lakování se zabýváme i zakázkovým truhlářstvím.`,
     btnText: `Přejít na TKV Truhlárnu`,
@@ -258,14 +244,7 @@ export const siteData = {
 
   // --- Kontakt + formulář ---
   contactSection: {
-    eyebrow: `Kontakt`,
     title: `Spojte se s námi`,
-    lead: `Pošlete nám poptávku nebo zavolejte – dílce rádi naceníme.`,
-    callLabel: `Zavolat`,
-    emailLabel: `Napsat e-mail`,
-    hoursLabel: `Otevírací doba`,
-    addressLabel: `Adresa provozovny`,
-    peopleLabel: `Kontaktní osoby`,
     formTitle: `Napište nám`,
     navigateTitle: `Otevřít v navigaci`,
     mapTitle: `Mapa Horní Ředice`,
@@ -330,10 +309,6 @@ export const siteData = {
 
   // --- Patička ---
   footer: {
-    about: `Práškové lakování kovů v Horních Ředicích u Pardubic. Součást skupiny TKV-GROUP.`,
-    navTitle: `Navigace`,
-    contactTitle: `Kontakt`,
-    divisionsTitle: `Divize`,
     text: `TKV-GROUP. Všechna práva vyhrazena.`,
     address: `Horní Ředice 18, 533 75`,
     ico: `IČO: 02016401`,

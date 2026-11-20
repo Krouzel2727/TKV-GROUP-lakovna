@@ -91,16 +91,19 @@ src/
 
 ## Designový systém TKV-GROUP (lakovna + truhlárna)
 
-Obě divize sdílejí jeden vizuální jazyk, liší se jen **akcentní barvou**:
+Obě divize používají **stejnou barevnou paletu značky TKV-GROUP**:
 
-| Divize | Akcent | Text na světlém | `siteData.brand` |
-|---|---|---|---|
-| Prášková lakovna | #92d050 (zelená z loga) | #3f6e12 | `lakovna` |
-| Truhlárna | #f39a1e (oranžová z webu tkv-redice.cz) | #94500a | `truhlarna` |
+| Barva | Použití |
+|---|---|
+| `#92D050` zelená | akcent: tlačítka, linky, ikony, zvýraznění na tmavém pozadí |
+| `#242222` tmavá | nadpisy, tmavé sekce, text na zelené |
+| `#595959` šedá | běžný text na světlém pozadí |
+| `#A6A6A6` světle šedá | text na tmavém pozadí, rámečky |
+| `#F1F5F9` světlá | pozadí sekcí |
 
-- **Barvy** jsou v `src/index.css` (`@theme`): neutrální základ (ink, body, muted, line, concrete, graphite, steel) + akcent `primary` / `primary-strong` / `primary-soft` / `on-primary`. Všechny kombinace splňují kontrast WCAG AA.
-- **Přepnutí divize:** `brand` v `siteData.ts` (propisuje se jako `data-brand` na `<html>`). Atribut `data-brand` lze dát i na jednu sekci (tak je zobrazen proklik na truhlárnu).
-- **Náhled stylu truhlárny při vývoji:** `npm run dev` a otevřít `http://localhost:5173/?brand=truhlarna`.
+- **Barvy** jsou v `src/index.css` (`@theme`). Odvozené odstíny (linky, karty na tmavém) jsou jen průhledné varianty barev z palety.
+- **Čitelnost (WCAG AA):** zelená se na světlém pozadí nepoužívá jako text (kontrast jen 1,85 : 1), jen jako akcent. Na světlém je text `#242222` / `#595959`, na tmavém bílý / `#A6A6A6` / zelený.
+- **Divize:** `brand` v `siteData.ts` určuje, která divize je „tento web“ (zvýraznění v přepínači divizí v horní liště a v patičce).
 - **Písma:** nadpisy *Barlow Condensed 700* (self-hosted, `src/fonts.css`), text systémové písmo zařízení (nic se nestahuje).
 - **Tvarosloví:** hranaté prvky se zkoseným rohem (`chamfer`) podle loga, technická mřížka na tmavých sekcích (`bg-blueprint`), číslované sekce (`01 — Služby`).
 - **Sdílené komponenty:** `src/components/ui.tsx` (Container, Eyebrow, SectionHeader) a `src/components/buttons.ts` (tlačítka).

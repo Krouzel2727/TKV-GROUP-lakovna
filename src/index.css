@@ -4,28 +4,33 @@
  * ============================================================
  *  DESIGNOVÝ SYSTÉM TKV-GROUP (společný pro lakovnu i truhlárnu)
  * ============================================================
- *  - Neutrální základ (grafit, beton, papír) je pro obě divize stejný.
- *  - Každá divize má jen vlastní akcentní barvu (primary).
- *  - Divize se přepíná atributem data-brand na <html> (nastavuje se
- *    ze siteData.brand) nebo na libovolné sekci.
+ *  Barevná paleta značky TKV-GROUP (platí pro všechny divize):
+ *    #92D050 zelená · #242222 tmavá · #595959 šedá · #A6A6A6 světle šedá · #F1F5F9 světlá
+ *
+ *  Pravidla pro čitelnost (WCAG AA):
+ *    - na světlém pozadí: nadpisy #242222, text #595959 (zelená jen jako akcent, ne text)
+ *    - na tmavém #242222: text bílý / #A6A6A6, zvýraznění zelenou
+ *    - na zelené: text #242222
+ *  Odvozené odstíny (linky, karty) jsou jen průhledné varianty barev z palety.
  * ============================================================
  */
 @theme {
-  /* Neutrální barvy */
-  --color-ink: #17181a; /* nadpisy, nejtmavší text */
-  --color-body: #3b3d41; /* běžný text */
-  --color-muted: #5f6267; /* doplňkový text (kontrast AA i na betonu) */
-  --color-line: #e2e0db; /* linky a rámečky */
-  --color-concrete: #f3f2ef; /* světlé pozadí sekcí */
-  --color-graphite: #222326; /* tmavé sekce */
-  --color-steel: #2c2e32; /* karty na tmavém pozadí */
-  --color-steel-line: #3e4046; /* rámečky na tmavém pozadí */
+  /* Paleta TKV-GROUP */
+  --color-primary: #92d050; /* zelená – akcent, tlačítka, linky, ikony */
+  --color-ink: #242222; /* tmavá – nadpisy, tmavé plochy */
+  --color-body: #595959; /* šedá – běžný text */
+  --color-muted: #595959; /* doplňkový text na světlém pozadí */
+  --color-silver: #a6a6a6; /* světle šedá – text na tmavém, rámečky */
+  --color-concrete: #f1f5f9; /* světlá – pozadí sekcí */
+  --color-graphite: #242222; /* tmavé sekce */
 
-  /* Akcent divize – výchozí: lakovna (zelená z loga) */
-  --color-primary: #92d050; /* plochy, tlačítka, linky na tmavém */
-  --color-primary-strong: #3f6e12; /* text a ikony na světlém pozadí */
-  --color-primary-soft: #eaf5dc; /* jemné podbarvení */
-  --color-on-primary: #17181a; /* text na akcentní barvě */
+  /* Odvozené odstíny z palety */
+  --color-line: color-mix(in srgb, #a6a6a6 45%, transparent); /* linky a rámečky na světlém */
+  --color-steel: color-mix(in srgb, #595959 25%, #242222); /* karty na tmavém pozadí */
+  --color-steel-line: #595959; /* rámečky na tmavém pozadí */
+  --color-primary-strong: #242222; /* text tam, kde by byla zelená na světlém (nečitelná) */
+  --color-primary-soft: color-mix(in srgb, #92d050 16%, #ffffff); /* jemné zelené podbarvení */
+  --color-on-primary: #242222; /* text na zelené */
 
   /* Písma */
   /* Text: systémové písmo (Segoe UI / San Francisco / Roboto) – bez stahování, rychlé načtení */
@@ -55,14 +60,6 @@
       transform: translateX(-50%);
     }
   }
-}
-
-/* Truhlárna – oranžová z původního webu tkv-redice.cz, posunutá do teplého tónu dřeva */
-[data-brand="truhlarna"] {
-  --color-primary: #f39a1e;
-  --color-primary-strong: #94500a;
-  --color-primary-soft: #fdf0dc;
-  --color-on-primary: #17181a;
 }
 
 /* Zkosený roh vpravo nahoře – motiv převzatý z hranatého loga */

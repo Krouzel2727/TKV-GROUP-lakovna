@@ -72,13 +72,13 @@ const Navbar = () => {
       <header className="fixed inset-x-0 top-0 z-50">
         {/* Horní lišta: divize skupiny + rychlý kontakt (jen na počítači) */}
         <div
-          className={`hidden overflow-hidden bg-ink text-sm text-white/75 transition-[height] duration-300 lg:block ${
+          className={`hidden overflow-hidden bg-ink text-sm text-silver transition-[height] duration-300 lg:block ${
             scrolled ? 'h-0' : 'h-10'
           }`}
         >
           <Container className="flex h-10 items-center justify-between">
             <nav aria-label={siteData.divisionsLabel} className="flex items-center gap-1">
-              <span className="mr-2 font-display font-semibold uppercase tracking-[0.18em] text-white/50">
+              <span className="mr-2 font-display font-bold uppercase tracking-[0.18em] text-silver">
                 {siteData.groupName}
               </span>
               {siteData.divisions.map((d) => {
@@ -87,10 +87,9 @@ const Navbar = () => {
                   <a
                     key={d.brand}
                     href={d.url}
-                    data-brand={d.brand}
                     aria-current={current ? 'page' : undefined}
                     className={`flex items-center gap-2 rounded-sm px-3 py-1 transition-colors ${
-                      current ? 'bg-white/10 text-white' : 'hover:text-white'
+                      current ? 'bg-steel text-white' : 'hover:text-white'
                     }`}
                   >
                     <span aria-hidden="true" className="h-2 w-2 rounded-full bg-primary" />
@@ -140,7 +139,7 @@ const Navbar = () => {
                       href={link.href}
                       aria-current={isActive ? 'location' : undefined}
                       className={`relative px-3 py-2 font-medium transition-colors after:absolute after:inset-x-3 after:-bottom-0.5 after:h-0.5 after:origin-left after:bg-primary after:transition-transform ${
-                        isActive ? 'text-ink after:scale-x-100' : 'text-muted after:scale-x-0 hover:text-ink hover:after:scale-x-100'
+                        isActive ? 'text-ink after:scale-x-100' : 'text-body after:scale-x-0 hover:text-ink hover:after:scale-x-100'
                       }`}
                     >
                       {link.label}
@@ -198,7 +197,7 @@ const Navbar = () => {
                     className="flex items-center justify-between border-b border-line py-4 font-display text-2xl font-bold uppercase text-ink"
                   >
                     {link.label}
-                    <span aria-hidden="true" className="text-primary-strong">
+                    <span aria-hidden="true" className="text-primary">
                       →
                     </span>
                   </motion.a>
@@ -217,8 +216,7 @@ const Navbar = () => {
                     <a
                       key={d.brand}
                       href={d.url}
-                      data-brand={d.brand}
-                      className="flex items-center gap-2 rounded-sm border border-line px-3 py-1.5 text-muted"
+                      className="flex items-center gap-2 rounded-sm border border-line px-3 py-1.5 text-body"
                     >
                       <span aria-hidden="true" className="h-2 w-2 rounded-full bg-primary" />
                       {d.name}

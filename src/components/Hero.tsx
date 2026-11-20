@@ -6,6 +6,10 @@ import { btn } from './buttons';
 
 // Fotky, které se střídají na pozadí úvodní sekce (nastavení v siteData.hero.images)
 const heroImages = siteData.hero.images.map((name) => getImage(name));
+// Parametry pod tlačítky = vybrané karty ze sekce Technologie
+const facts = siteData.hero.factCardIds
+  .map((id) => siteData.techSection.cards.find((card) => card.id === id))
+  .filter((card) => card !== undefined);
 const INTERVAL = 6000;
 
 const Hero = () => {
@@ -50,7 +54,7 @@ const Hero = () => {
         ) : null,
       )}
       {/* Tmavý přechod zleva – text je čitelný a fotka zůstává vidět */}
-      <div className="absolute inset-0 bg-gradient-to-r from-graphite via-graphite/85 to-graphite/30" />
+      <div className="absolute inset-0 bg-gradient-to-r from-graphite via-graphite/85 to-graphite/35" />
       <div className="absolute inset-0 bg-gradient-to-t from-graphite via-transparent to-transparent" />
       <div className="bg-blueprint absolute inset-0 opacity-60" />
 
@@ -66,7 +70,7 @@ const Hero = () => {
               {hero.title}
             </span>
           </h1>
-          <p className="animate-rise-in mt-6 max-w-2xl text-lg leading-relaxed text-white/80 [animation-delay:120ms] sm:text-xl">
+          <p className="animate-rise-in mt-6 max-w-2xl text-lg leading-relaxed text-white [animation-delay:120ms] sm:text-xl">
             {hero.subtitle}
           </p>
           <div className="animate-rise-in mt-10 flex flex-wrap gap-3 [animation-delay:240ms]">
@@ -83,16 +87,16 @@ const Hero = () => {
       {/* Klíčová fakta + přepínání fotek */}
       <Container className="relative z-10 pb-8">
         <div className="animate-rise-in [animation-delay:360ms]">
-          <dl className="grid grid-cols-2 border-t border-white/15 sm:grid-cols-4">
-            {hero.facts.map((fact, i) => (
+          <dl className="grid grid-cols-2 border-t border-steel-line sm:grid-cols-4">
+            {facts.map((fact, i) => (
               <div
-                key={fact.label}
-                className={`flex flex-col-reverse justify-end border-white/15 py-5 pr-4 sm:border-t-0 sm:pl-6 ${
+                key={fact.id}
+                className={`flex flex-col-reverse justify-end border-steel-line py-5 pr-4 sm:border-t-0 sm:pl-6 ${
                   i % 2 === 1 ? 'border-l pl-4' : ''
                 } ${i > 1 ? 'border-t' : ''} ${i === 0 ? 'sm:pl-0' : 'sm:border-l'}`}
               >
-                <dt className="mt-1 text-sm text-white/65">{fact.label}</dt>
-                <dd className="font-display text-3xl font-bold text-white sm:text-4xl">{fact.value}</dd>
+                <dt className="mt-1 text-sm text-silver">{fact.label}</dt>
+                <dd className="font-display text-2xl font-bold text-white sm:text-4xl">{fact.value}</dd>
               </div>
             ))}
           </dl>
@@ -107,7 +111,7 @@ const Hero = () => {
                 className="group flex h-6 w-10 items-center"
               >
                 <span
-                  className={`h-0.5 w-full transition-colors ${i === current ? 'bg-primary' : 'bg-white/30 group-hover:bg-white/60'}`}
+                  className={`h-0.5 w-full transition-colors ${i === current ? 'bg-primary' : 'bg-steel-line group-hover:bg-silver'}`}
                 />
               </button>
             ))}
