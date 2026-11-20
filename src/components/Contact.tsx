@@ -95,82 +95,83 @@ const Contact = () => {
   return (
     <section id="kontakt" className="bg-concrete py-20 sm:py-28">
       <Container>
-        <SectionHeader index="05" title={cs.title} />
-
-        {/* Kontaktní údaje v jedné klidné kartě: nahoře provozovna, pod čarou kontaktní osoby */}
-        <motion.div
-          variants={fadeInUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
-          className={card.light}
-        >
-          <div className="flex flex-col gap-3 px-6 py-5 sm:px-8 lg:flex-row lg:items-center lg:gap-8">
-            <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-body">{contacts.hala1.name}</h3>
-            <a href={mapsLink} target="_blank" rel="noopener noreferrer" title={cs.navigateTitle} className={`flex items-center gap-2.5 font-semibold text-ink ${linkCls}`}>
-              <FaMapMarkerAlt aria-hidden="true" className="shrink-0 text-primary" />
-              {contacts.hala1.adres}
-            </a>
-            <p className="flex items-center gap-2.5 text-ink">
-              <FaClock aria-hidden="true" className="shrink-0 text-primary" />
-              {contacts.hala1.open}
-            </p>
-            <p className="text-sm text-body">
-              {cs.icoLabel} {contacts.hala1.ico}
-              <span aria-hidden="true" className="mx-2 text-silver">
-                |
-              </span>
-              {cs.dicLabel} {contacts.hala1.dico}
-            </p>
-            <a href={mapsLink} target="_blank" rel="noopener noreferrer" className={`text-sm font-semibold text-ink lg:ml-auto ${linkCls}`}>
-              {cs.navigateTitle} <span aria-hidden="true">↗</span>
-            </a>
-          </div>
-
-          <div className="grid border-t border-line md:grid-cols-2 md:divide-x md:divide-line">
-            {people.map((person, i) => (
-              <div
-                key={person.name}
-                className={`flex flex-col gap-2 px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-8 ${i > 0 ? 'border-t border-line md:border-t-0' : ''}`}
-              >
-                <div className="min-w-0">
-                  <p className="font-display text-lg font-bold uppercase tracking-tight text-ink">{person.name}</p>
-                  <a href={`mailto:${person.email}`} className={`flex items-center gap-2 break-all text-sm text-body hover:text-ink ${linkCls}`}>
-                    <FaEnvelope aria-hidden="true" className="shrink-0 text-primary" />
-                    {person.email}
-                  </a>
-                </div>
+        {/* Nadpis vlevo, telefony na Romana a Kubu vpravo */}
+        <div className="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
+          <SectionHeader index="05" title={cs.title} />
+          <motion.ul
+            variants={fadeInUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-60px' }}
+            className="mb-10 grid gap-6 sm:grid-cols-2 lg:mb-12 lg:flex lg:gap-0 lg:divide-x lg:divide-silver/50"
+          >
+            {people.map((person) => (
+              <li key={person.name} className="lg:px-8 lg:first:pl-0 lg:last:pr-0">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-body">{person.name}</p>
                 <a
                   href={`tel:${person.phone.replace(/\s+/g, '')}`}
-                  className={`flex shrink-0 items-center gap-2.5 font-display text-2xl font-bold text-ink ${linkCls}`}
+                  className={`mt-1 flex items-center gap-2.5 font-display text-3xl font-bold text-ink ${linkCls}`}
                 >
-                  <FaPhoneAlt aria-hidden="true" className="text-base text-primary" />
+                  <FaPhoneAlt aria-hidden="true" className="text-lg text-primary" />
                   {person.phone}
                 </a>
-              </div>
+                <a href={`mailto:${person.email}`} className={`mt-1 inline-flex items-center gap-2 break-all text-sm text-body hover:text-ink ${linkCls}`}>
+                  <FaEnvelope aria-hidden="true" className="shrink-0 text-primary" />
+                  {person.email}
+                </a>
+              </li>
             ))}
-          </div>
-        </motion.div>
+          </motion.ul>
+        </div>
 
-        {/* Mapa vedle formuláře */}
+        {/* Mapa s údaji o provozovně vedle formuláře */}
         <motion.div
           variants={fadeInUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-60px' }}
-          className={`${card.light} mt-6 grid overflow-hidden lg:grid-cols-2`}
+          className={`${card.light} grid overflow-hidden lg:grid-cols-2`}
         >
-          <div className="min-h-[360px] bg-concrete lg:min-h-full">
+          <div className="relative flex flex-col bg-concrete">
             <iframe
               src={contacts.mapUrl}
               width="100%"
               height="100%"
-              style={{ border: 0, minHeight: 360 }}
+              className="h-80 w-full lg:absolute lg:inset-0 lg:h-full"
+              style={{ border: 0 }}
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               title={cs.mapTitle}
             />
+            {/* Karta provozovny – na počítači vpravo nahoře na mapě (nezakrývá logo a podmínky Googlu), na mobilu pod mapou */}
+            <div className="relative border-t border-line bg-white p-6 lg:absolute lg:right-5 lg:top-5 lg:max-w-xs lg:rounded-sm lg:border lg:border-t-[3px] lg:border-t-primary lg:shadow-[0_20px_40px_-20px_rgb(36_34_34/0.45)]">
+              <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-body">{contacts.hala1.name}</h3>
+              <a
+                href={mapsLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={cs.navigateTitle}
+                className={`mt-2 flex items-start gap-2.5 font-display text-xl font-bold uppercase tracking-tight text-ink ${linkCls}`}
+              >
+                <FaMapMarkerAlt aria-hidden="true" className="mt-1 shrink-0 text-base text-primary" />
+                {contacts.hala1.adres}
+              </a>
+              <p className="mt-2 flex items-center gap-2.5 text-ink">
+                <FaClock aria-hidden="true" className="shrink-0 text-primary" />
+                {contacts.hala1.open}
+              </p>
+              <p className="mt-2 text-sm text-body">
+                {cs.icoLabel} {contacts.hala1.ico}
+                <span aria-hidden="true" className="mx-2 text-silver">
+                  |
+                </span>
+                {cs.dicLabel} {contacts.hala1.dico}
+              </p>
+              <a href={mapsLink} target="_blank" rel="noopener noreferrer" className={`mt-4 inline-block text-sm font-semibold text-ink ${linkCls}`}>
+                {cs.navigateTitle} <span aria-hidden="true">↗</span>
+              </a>
+            </div>
           </div>
 
           <div id="formular" ref={formWrapRef} className="scroll-mt-28 p-6 sm:p-10">
