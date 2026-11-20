@@ -1,42 +1,44 @@
 import { siteData } from '../config/siteData';
+import { Container, Eyebrow } from './ui';
 
-// Běžící pás s logy/názvy zákazníků (seznam je zdvojený kvůli plynulé smyčce)
+// Běžící pás se zákazníky (seznam je zdvojený kvůli plynulé smyčce, při najetí myší se zastaví)
 const References = () => {
-  const { title, items } = siteData.referencesSection;
+  const { eyebrow, title, items } = siteData.referencesSection;
 
   return (
-    <section id="zakaznici" className="py-16 bg-white overflow-hidden">
-      <div className="container mx-auto px-4 mb-8">
-        <h2 className="text-3xl font-bold text-center text-primary">{title}</h2>
-      </div>
-      <div className="flex w-full overflow-hidden whitespace-nowrap bg-white relative">
-        <div className="flex w-max animate-marquee gap-8 px-4">
+    <section id="zakaznici" className="overflow-hidden border-y border-line bg-white py-14">
+      <Container className="mb-8 flex flex-col items-start gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <Eyebrow>{eyebrow}</Eyebrow>
+          <h2 className="mt-3 font-display text-3xl font-bold uppercase tracking-tight">{title}</h2>
+        </div>
+      </Container>
+      <div className="group mask-fade-x flex w-full overflow-hidden">
+        <ul className="flex w-max animate-marquee gap-3 px-1.5 group-hover:[animation-play-state:paused]">
           {[...items, ...items].map((item, index) => {
             // Druhá kopie seznamu je jen kvůli plynulé animaci – čtečky a vyhledávače ji přeskočí
             const duplicate = index >= items.length;
-            return item.url ? (
-              <a
-                key={index}
-                href={item.url}
-                target="_blank"
-                rel="noreferrer"
-                aria-hidden={duplicate || undefined}
-                tabIndex={duplicate ? -1 : undefined}
-                className="inline-block bg-bgLight px-6 py-4 rounded-lg text-textMain font-semibold text-lg hover:text-primary hover:scale-105 transition-all shadow-sm border border-gray-100"
-              >
-                {item.name}
-              </a>
-            ) : (
-              <div
-                key={index}
-                aria-hidden={duplicate || undefined}
-                className="inline-block bg-bgLight px-6 py-4 rounded-lg text-textMain font-semibold text-lg cursor-default shadow-sm border border-gray-100"
-              >
-                {item.name}
-              </div>
+            const cls =
+              'flex h-16 items-center whitespace-nowrap rounded-sm border border-line px-6 font-display text-xl font-semibold tracking-wide text-muted';
+            return (
+              <li key={index} aria-hidden={duplicate || undefined}>
+                {item.url ? (
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    tabIndex={duplicate ? -1 : undefined}
+                    className={`${cls} transition-colors hover:border-primary hover:text-ink`}
+                  >
+                    {item.name}
+                  </a>
+                ) : (
+                  <span className={cls}>{item.name}</span>
+                )}
+              </li>
             );
           })}
-        </div>
+        </ul>
       </div>
     </section>
   );

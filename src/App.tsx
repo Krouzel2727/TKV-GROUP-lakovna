@@ -9,12 +9,13 @@ import References from './components/References';
 import CtaSection from './components/CtaSection';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import FloatingCall from './components/FloatingCall';
 
 function App() {
   return (
     // reducedMotion="user": pokud má návštěvník v systému vypnuté animace, web je respektuje
     <MotionConfig reducedMotion="user">
-      <div className="font-sans text-textMain bg-white overflow-x-hidden">
+      <div className="overflow-x-clip">
         <Navbar />
         <main>
           <Hero />
@@ -27,6 +28,7 @@ function App() {
           <Contact />
         </main>
         <Footer />
+        <FloatingCall />
       </div>
     </MotionConfig>
   );

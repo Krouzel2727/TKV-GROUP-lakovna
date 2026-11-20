@@ -1,51 +1,46 @@
 import { motion } from 'framer-motion';
 import { siteData } from '../config/siteData';
 import { fadeInUp } from '../utils/animations';
+import { Container, SectionHeader } from './ui';
 
 const NewHall = () => {
-  const { title, subtitle, halls, badge } = siteData.newHallSection;
+  const { eyebrow, title, subtitle, halls, badge } = siteData.newHallSection;
 
   return (
-    <section className="py-20 bg-dark text-white">
-      <div className="container mx-auto px-4">
-        <motion.div
-          variants={fadeInUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold mt-4 text-primary">{title}</h2>
-          <p className="text-gray-400 mt-4 text-lg">{subtitle}</p>
-        </motion.div>
+    <section className="bg-blueprint relative bg-graphite py-20 text-white sm:py-28">
+      <Container>
+        <SectionHeader index="03" eyebrow={eyebrow} title={title} lead={subtitle} dark />
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid gap-5 lg:grid-cols-2">
           {halls.map((hall, index) => (
-            <motion.div
+            <motion.article
               key={index}
               variants={fadeInUp}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 + index * 0.2 }}
-              className="relative bg-[#333131] p-8 md:p-10 rounded-2xl border border-gray-700 hover:border-primary transition-colors pb-16"
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ delay: index * 0.12 }}
+              className="chamfer group relative border border-steel-line bg-steel p-8 transition-colors hover:border-primary sm:p-10"
             >
-              <h3 className="text-3xl font-bold text-primary mb-6">{hall.title}</h3>
-              <div className="text-gray-300 leading-relaxed space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <span aria-hidden="true" className="font-display text-sm font-semibold uppercase tracking-[0.18em] text-white/40">
+                  {String(index + 1).padStart(2, '0')} / {String(halls.length).padStart(2, '0')}
+                </span>
+                <span className="rounded-sm border border-primary/60 bg-primary/15 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-primary">
+                  {badge}
+                </span>
+              </div>
+              <h3 className="mt-6 font-display text-3xl font-bold uppercase tracking-tight text-white sm:text-4xl">{hall.title}</h3>
+              <div className="mt-6 space-y-4 leading-relaxed text-white/70 [&_strong]:font-semibold [&_strong]:text-white">
                 {hall.paragraphs.map((paragraph, i) => (
                   // Odstavce mohou obsahovat <strong> – texty jsou pod naší kontrolou v siteData
                   <p key={i} dangerouslySetInnerHTML={{ __html: paragraph }} />
                 ))}
               </div>
-              <div className="absolute bottom-6 right-6">
-                <span className="bg-primary/20 border border-primary text-primary text-xs font-bold px-4 py-2 rounded-full uppercase tracking-wider">
-                  {badge}
-                </span>
-              </div>
-            </motion.div>
+            </motion.article>
           ))}
         </div>
-      </div>
+      </Container>
     </section>
   );
 };

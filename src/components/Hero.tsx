@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import { siteData } from '../config/siteData';
-import { fadeInLeft } from '../utils/animations';
 import { getImage } from '../utils/images';
+import { Container } from './ui';
+import { btn } from './buttons';
 
 // Fotky, které se střídají na pozadí úvodní sekce (nastavení v siteData.hero.images)
 const heroImages = siteData.hero.images.map((name) => getImage(name));
+const INTERVAL = 6000;
 
 const Hero = () => {
+  const { hero } = siteData;
   const [current, setCurrent] = useState(0);
   // Další fotky se načtou až po načtení stránky – první fotka má přednost (rychlejší zobrazení)
   const [restReady, setRestReady] = useState(false);
@@ -24,14 +26,12 @@ const Hero = () => {
 
   useEffect(() => {
     if (!restReady) return;
-    const interval = setInterval(() => {
-      setCurrent((prev) => (prev === heroImages.length - 1 ? 0 : prev + 1));
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [restReady]);
+    const timeout = setTimeout(() => setCurrent((prev) => (prev + 1) % heroImages.length), INTERVAL);
+    return () => clearTimeout(timeout);
+  }, [restReady, current]);
 
   return (
-    <section className="relative h-screen flex items-center justify-start bg-dark overflow-hidden pt-20">
+    <section className="relative flex min-h-[100svh] flex-col overflow-hidden bg-graphite pt-20 lg:pt-[7.5rem]">
       {heroImages.map((img, index) =>
         index === 0 || restReady ? (
           <img
@@ -43,58 +43,77 @@ const Hero = () => {
             aria-hidden="true"
             decoding="async"
             fetchPriority={index === 0 ? 'high' : 'low'}
-            className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-in-out ${
-              index === current ? 'opacity-100' : 'opacity-0'
+            className={`absolute inset-0 h-full w-full scale-105 object-cover transition-[opacity,transform] duration-[1500ms] ease-out ${
+              index === current ? 'scale-100 opacity-100' : 'opacity-0'
             }`}
           />
         ) : null,
       )}
-      <div className="absolute inset-0 bg-black/70" />
+      {/* Tmavý přechod zleva – text je čitelný a fotka zůstává vidět */}
+      <div className="absolute inset-0 bg-gradient-to-r from-graphite via-graphite/85 to-graphite/30" />
+      <div className="absolute inset-0 bg-gradient-to-t from-graphite via-transparent to-transparent" />
+      <div className="bg-blueprint absolute inset-0 opacity-60" />
 
-      <div className="relative z-10 container mx-auto px-4 text-left">
+      <Container className="relative z-10 flex flex-1 flex-col justify-center py-16">
         <div className="max-w-3xl">
-          <motion.h1
-            initial="hidden"
-            animate="visible"
-            variants={fadeInLeft}
-            className="font-bold text-primary mb-6 drop-shadow-lg"
-          >
-            <span className="block text-sm md:text-base font-semibold uppercase tracking-[0.2em] text-white/80 mb-3">
-              {siteData.hero.eyebrow}
+          {/* Animace úvodního textu je čistě v CSS – text se zobrazí hned, bez čekání na JavaScript (rychlejší LCP) */}
+          <h1 className="animate-rise-in text-white">
+            <span className="flex items-center gap-3 font-display text-sm font-semibold uppercase tracking-[0.22em] text-primary sm:text-base">
+              <span aria-hidden="true" className="h-0.5 w-10 bg-primary" />
+              {hero.eyebrow}
             </span>
-            <span className="block text-5xl md:text-6xl lg:text-7xl">{siteData.hero.title}</span>
-          </motion.h1>
-          <motion.p
-            initial="hidden"
-            animate="visible"
-            variants={fadeInLeft}
-            transition={{ delay: 0.2 }}
-            className="text-lg md:text-xl text-white leading-relaxed drop-shadow-md"
-          >
-            {siteData.hero.subtitle}
-          </motion.p>
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeInLeft}
-            transition={{ delay: 0.4 }}
-            className="flex flex-wrap gap-4 mt-10"
-          >
-            <a
-              href="#formular"
-              className="inline-block bg-primary text-white font-semibold py-3 px-8 rounded-md border-2 border-primary hover:bg-white hover:text-primary transition-all duration-300 shadow-lg"
-            >
-              {siteData.hero.btnPrimary}
+            <span className="mt-5 block font-display text-6xl font-bold uppercase leading-[0.9] tracking-tight sm:text-7xl lg:text-8xl">
+              {hero.title}
+            </span>
+          </h1>
+          <p className="animate-rise-in mt-6 max-w-2xl text-lg leading-relaxed text-white/80 [animation-delay:120ms] sm:text-xl">
+            {hero.subtitle}
+          </p>
+          <div className="animate-rise-in mt-10 flex flex-wrap gap-3 [animation-delay:240ms]">
+            <a href="#formular" className={btn.primary}>
+              {hero.btnPrimary} <span aria-hidden="true">→</span>
             </a>
-            <a
-              href="#kontakt"
-              className="inline-block bg-transparent text-white font-semibold py-3 px-8 rounded-md border-2 border-white hover:bg-white hover:text-dark transition-all duration-300"
-            >
-              {siteData.hero.btnSecondary}
+            <a href="#kontakt" className={btn.outlineLight}>
+              {hero.btnSecondary}
             </a>
-          </motion.div>
+          </div>
         </div>
-      </div>
+      </Container>
+
+      {/* Klíčová fakta + přepínání fotek */}
+      <Container className="relative z-10 pb-8">
+        <div className="animate-rise-in [animation-delay:360ms]">
+          <dl className="grid grid-cols-2 border-t border-white/15 sm:grid-cols-4">
+            {hero.facts.map((fact, i) => (
+              <div
+                key={fact.label}
+                className={`flex flex-col-reverse justify-end border-white/15 py-5 pr-4 sm:border-t-0 sm:pl-6 ${
+                  i % 2 === 1 ? 'border-l pl-4' : ''
+                } ${i > 1 ? 'border-t' : ''} ${i === 0 ? 'sm:pl-0' : 'sm:border-l'}`}
+              >
+                <dt className="mt-1 text-sm text-white/65">{fact.label}</dt>
+                <dd className="font-display text-3xl font-bold text-white sm:text-4xl">{fact.value}</dd>
+              </div>
+            ))}
+          </dl>
+          <div className="mt-2 flex justify-end gap-1">
+            {heroImages.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setCurrent(i)}
+                aria-label={`${hero.slideLabel} ${i + 1}`}
+                aria-current={i === current ? 'true' : undefined}
+                className="group flex h-6 w-10 items-center"
+              >
+                <span
+                  className={`h-0.5 w-full transition-colors ${i === current ? 'bg-primary' : 'bg-white/30 group-hover:bg-white/60'}`}
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+      </Container>
     </section>
   );
 };

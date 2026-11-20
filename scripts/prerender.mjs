@@ -8,7 +8,7 @@
  * Výsledek: vyhledávače i návštěvníci dostanou hned kompletní obsah stránky,
  * React ho v prohlížeči pak jen „oživí“ (hydratace).
  */
-import { readFile, writeFile, rm, access } from 'node:fs/promises';
+import { readFile, writeFile, rm, access, readdir } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 
@@ -25,7 +25,14 @@ if (!template.includes('<!--app-html-->')) {
 }
 
 const appHtml = render();
-const html = template.replace('<!--app-html-->', appHtml);
+
+// Přednačtení písma nadpisů (je hned v úvodu stránky) – zkrátí dobu, než se nadpis zobrazí správným písmem
+const fontPreloads = (await readdir(path.join(distDir, 'assets')))
+  .filter((f) => /^barlow-condensed-latin(-ext)?-700-normal-.*\.woff2$/.test(f))
+  .map((f) => `<link rel="preload" href="/assets/${f}" as="font" type="font/woff2" crossorigin />`)
+  .join('\n    ');
+
+const html = template.replace('<!--app-html-->', appHtml).replace('</title>', `</title>\n    ${fontPreloads}`);
 await writeFile(indexPath, html);
 
 // Kontrola: všechny odkazy na /assets/ musí existovat v klientském buildu

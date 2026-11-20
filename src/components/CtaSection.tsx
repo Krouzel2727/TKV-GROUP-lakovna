@@ -1,30 +1,34 @@
 import { motion } from 'framer-motion';
 import { siteData } from '../config/siteData';
 import { fadeInUp } from '../utils/animations';
+import { Container, Eyebrow } from './ui';
+import { btn } from './buttons';
 
+// Odkaz na sesterskou divizi – zobrazuje se v jejích barvách (data-brand)
 const CtaSection = () => {
-  const { title, subtitle, btnText, url } = siteData.ctaSection;
+  const { brand, eyebrow, title, subtitle, btnText, url } = siteData.ctaSection;
 
   return (
-    <section className="py-16 bg-dark text-center border-t-4 border-primary">
-      <motion.div
-        variants={fadeInUp}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        className="container mx-auto px-4"
-      >
-        <h2 className="text-3xl text-primary font-bold mb-6">{title}</h2>
-        <p className="text-gray-300 mb-8 max-w-2xl mx-auto">{subtitle}</p>
-        <a
-          href={url}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-block bg-primary text-white font-bold py-4 px-10 rounded-full hover:bg-green-500 transition-colors shadow-[0_0_20px_rgba(146,208,80,0.3)] hover:shadow-[0_0_30px_rgba(146,208,80,0.5)]"
+    <section data-brand={brand} className="bg-blueprint relative overflow-hidden bg-graphite py-16 sm:py-20">
+      <span aria-hidden="true" className="absolute inset-y-0 left-0 w-1.5 bg-primary" />
+      <Container>
+        <motion.div
+          variants={fadeInUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between"
         >
-          {btnText}
-        </a>
-      </motion.div>
+          <div className="max-w-2xl">
+            <Eyebrow dark>{eyebrow}</Eyebrow>
+            <h2 className="mt-4 font-display text-3xl font-bold uppercase leading-tight tracking-tight text-white sm:text-4xl">{title}</h2>
+            <p className="mt-3 text-lg text-white/70">{subtitle}</p>
+          </div>
+          <a href={url} target="_blank" rel="noreferrer" className={`${btn.primary} shrink-0 self-start lg:self-auto`}>
+            {btnText} <span aria-hidden="true">↗</span>
+          </a>
+        </motion.div>
+      </Container>
     </section>
   );
 };

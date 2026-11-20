@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaChevronLeft, FaChevronRight, FaTimes } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaTimes, FaExpand } from 'react-icons/fa';
 import { siteData } from '../config/siteData';
-
 import { getImage } from '../utils/images';
+import { Container, SectionHeader } from './ui';
+import { btn } from './buttons';
 
 // Fotky a jejich pořadí/popisky se nastavují v siteData.gallerySection.photos
 const galleryImages = siteData.gallerySection.photos.map((photo) => ({
@@ -11,156 +12,103 @@ const galleryImages = siteData.gallerySection.photos.map((photo) => ({
   alt: photo.alt,
 }));
 
-const GAP = 24; // mezera mezi fotkami v px (odpovídá třídě gap-6)
-
 const Gallery = () => {
   const t = siteData.gallerySection;
-  const [sliderIndex, setSliderIndex] = useState(0);
+  const [expanded, setExpanded] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const touchStartX = useRef<number | null>(null);
+  const lastTrigger = useRef<HTMLElement | null>(null);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [itemWidth, setItemWidth] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
+  const visible = expanded ? galleryImages : galleryImages.slice(0, t.initialCount);
+  const total = galleryImages.length;
 
-  // Na mobilu 1 fotka přes celou šířku, jinak 3 vedle sebe
-  useEffect(() => {
-    const updateWidth = () => {
-      if (containerRef.current) {
-        const width = containerRef.current.offsetWidth;
-        const mobile = window.innerWidth < 768;
-        setIsMobile(mobile);
-        setItemWidth(mobile ? width : (width - GAP * 2) / 3);
-      }
-    };
-    updateWidth();
-    window.addEventListener('resize', updateWidth);
-    return () => window.removeEventListener('resize', updateWidth);
+  const open = (index: number, trigger: HTMLElement) => {
+    lastTrigger.current = trigger;
+    setLightboxIndex(index);
+  };
+  const close = useCallback(() => {
+    setLightboxIndex(null);
+    lastTrigger.current?.focus();
   }, []);
+  const next = useCallback(() => setLightboxIndex((i) => (i === null ? null : (i + 1) % total)), [total]);
+  const prev = useCallback(() => setLightboxIndex((i) => (i === null ? null : (i - 1 + total) % total)), [total]);
 
-  const maxIndex = isMobile ? galleryImages.length - 1 : galleryImages.length - 3;
-
-  const handleNextSlide = useCallback(() => {
-    setSliderIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
-  }, [maxIndex]);
-
-  const handlePrevSlide = () => {
-    setSliderIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
-  };
-
-  const goToSlide = (idx: number) => {
-    setSliderIndex(idx > maxIndex ? maxIndex : idx);
-  };
-
-  // Automatické posouvání (pozastaví se při otevřeném náhledu)
-  useEffect(() => {
-    if (lightboxIndex !== null || itemWidth === 0) return;
-    const interval = setInterval(handleNextSlide, 4500);
-    return () => clearInterval(interval);
-  }, [sliderIndex, lightboxIndex, itemWidth, handleNextSlide]);
-
-  // Zablokování scrollu stránky při otevřeném náhledu
-  useEffect(() => {
-    document.body.style.overflow = lightboxIndex === null ? 'unset' : 'hidden';
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [lightboxIndex]);
-
-  const lightboxNext = () =>
-    setLightboxIndex((prev) => (prev === null ? null : (prev + 1) % galleryImages.length));
-  const lightboxPrev = () =>
-    setLightboxIndex((prev) => (prev === null ? null : prev === 0 ? galleryImages.length - 1 : prev - 1));
-
-  // Klávesové zkratky v náhledu
+  // Zablokování scrollu stránky + ovládání klávesnicí v náhledu
   useEffect(() => {
     if (lightboxIndex === null) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setLightboxIndex(null);
-      if (e.key === 'ArrowRight') lightboxNext();
-      if (e.key === 'ArrowLeft') lightboxPrev();
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowRight') next();
+      if (e.key === 'ArrowLeft') prev();
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [lightboxIndex]);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [lightboxIndex, close, next, prev]);
+
+  // Swipe prstem na mobilu
+  const onTouchStart = (e: React.TouchEvent) => (touchStartX.current = e.touches[0].clientX);
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(dx) > 50) (dx < 0 ? next : prev)();
+    touchStartX.current = null;
+  };
 
   return (
-    <section id="reference" className="py-20 bg-bgLight overflow-hidden">
-      <div className="container mx-auto px-4 max-w-6xl">
-        <h2 className="text-4xl font-bold text-center mb-12 text-primary">{t.title}</h2>
+    <section id="reference" className="bg-concrete py-20 sm:py-28">
+      <Container>
+        <SectionHeader index="04" eyebrow={t.eyebrow} title={t.title} lead={t.lead} />
 
-        <div className="flex items-center justify-between gap-4 md:gap-8">
-          <button
-            onClick={handlePrevSlide}
-            className="p-3 md:p-4 bg-white rounded-full shadow-md text-primary hover:bg-primary hover:text-white transition-colors z-10 shrink-0"
-            aria-label={t.prevLabel}
-          >
-            <FaChevronLeft className="text-xl md:text-2xl" />
-          </button>
-
-          <div ref={containerRef} className="flex-1 overflow-hidden py-2 relative">
-            <motion.div
-              className="flex gap-6"
-              initial={{ opacity: 0 }}
-              animate={{
-                x: itemWidth > 0 ? -(itemWidth + GAP) * sliderIndex : 0,
-                opacity: itemWidth > 0 ? 1 : 0,
-              }}
-              transition={{ type: 'tween', duration: 0.5, ease: 'easeInOut' }}
+        <ul className="grid grid-flow-dense grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+          {visible.map((image, idx) => (
+            <motion.li
+              key={image.src}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.4, delay: (idx % 4) * 0.05 }}
+              className={idx === 0 ? 'col-span-2 row-span-2' : ''}
             >
-              {galleryImages.map((image, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => setLightboxIndex(idx)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      setLightboxIndex(idx);
-                    }
-                  }}
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`${t.openLabel}: ${image.alt}`}
-                  style={{ width: itemWidth > 0 ? itemWidth : '100%' }}
-                  className="flex-shrink-0 aspect-square rounded-xl shadow-md cursor-pointer overflow-hidden group bg-gray-200"
-                >
-                  <img
-                    src={image.src}
-                    srcSet={image.srcSet}
-                    sizes="(min-width: 768px) 360px, 80vw"
-                    width={800}
-                    height={800}
-                    alt={image.alt}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                </div>
-              ))}
-            </motion.div>
-          </div>
-
-          <button
-            onClick={handleNextSlide}
-            className="p-3 md:p-4 bg-white rounded-full shadow-md text-primary hover:bg-primary hover:text-white transition-colors z-10 shrink-0"
-            aria-label={t.nextLabel}
-          >
-            <FaChevronRight className="text-xl md:text-2xl" />
-          </button>
-        </div>
-
-        <div className="flex justify-center flex-wrap gap-2 mt-10 px-4">
-          {Array.from({ length: maxIndex + 1 }).map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => goToSlide(idx)}
-              aria-label={`${t.goToLabel} ${idx + 1}`}
-              className={`h-2.5 md:h-3 rounded-full transition-all duration-300 ${
-                sliderIndex === idx ? 'bg-primary w-8 md:w-10' : 'bg-gray-300 w-2.5 md:w-3 hover:bg-gray-400'
-              }`}
-            />
+              <button
+                type="button"
+                onClick={(e) => open(idx, e.currentTarget)}
+                className="group relative block aspect-square w-full overflow-hidden rounded-sm bg-line"
+              >
+                <span className="sr-only">{t.openLabel}: </span>
+                <img
+                  src={image.src}
+                  srcSet={image.srcSet}
+                  sizes={idx === 0 ? '(min-width: 1024px) 600px, (min-width: 768px) 66vw, 100vw' : '(min-width: 1024px) 300px, (min-width: 768px) 33vw, 50vw'}
+                  width={800}
+                  height={800}
+                  alt={image.alt}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <span aria-hidden="true" className="absolute inset-0 flex items-end bg-gradient-to-t from-ink/80 via-ink/0 to-transparent p-4 text-left opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
+                  <span className="flex w-full items-end justify-between gap-3 text-sm text-white">
+                    <span className="line-clamp-2">{image.alt}</span>
+                    <FaExpand aria-hidden="true" className="shrink-0 text-primary" />
+                  </span>
+                </span>
+              </button>
+            </motion.li>
           ))}
-        </div>
-      </div>
+        </ul>
+
+        {total > t.initialCount && (
+          <div className="mt-10 flex justify-center">
+            <button type="button" onClick={() => setExpanded(!expanded)} className={btn.outlineDark} aria-expanded={expanded}>
+              {expanded ? t.showLess : `${t.showAll} (${total})`}
+            </button>
+          </div>
+        )}
+      </Container>
 
       {/* Lightbox – zvětšený náhled */}
       <AnimatePresence>
@@ -169,61 +117,86 @@ const Gallery = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md p-4"
-            onClick={() => setLightboxIndex(null)}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-[100] flex flex-col bg-ink/95 backdrop-blur-md"
+            onClick={close}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
             role="dialog"
             aria-modal="true"
             aria-label={galleryImages[lightboxIndex].alt}
           >
-            <button
-              className="absolute top-4 md:top-8 right-4 md:right-8 text-white/70 hover:text-primary text-4xl transition-colors z-50"
-              onClick={() => setLightboxIndex(null)}
-              aria-label={t.lightboxClose}
-              autoFocus
-            >
-              <FaTimes />
-            </button>
-
-            <div className="absolute top-6 left-6 text-white font-medium bg-black/50 px-4 py-2 rounded-full border border-white/20 z-50 shadow-lg">
-              {lightboxIndex + 1} / {galleryImages.length}
+            <div className="flex items-center justify-between p-4 text-white sm:p-6" onClick={(e) => e.stopPropagation()}>
+              <span className="font-display text-lg font-semibold tracking-wider" aria-live="polite">
+                {String(lightboxIndex + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
+              </span>
+              <button
+                type="button"
+                className="flex h-11 w-11 items-center justify-center text-2xl text-white/80 transition-colors hover:text-primary"
+                onClick={close}
+                aria-label={t.lightboxClose}
+                autoFocus
+              >
+                <FaTimes />
+              </button>
             </div>
 
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                lightboxPrev();
-              }}
-              aria-label={t.lightboxPrev}
-              className="absolute left-2 md:left-8 text-white/70 hover:text-primary text-3xl md:text-5xl bg-black/40 hover:bg-black/60 p-3 md:p-4 rounded-full transition-all z-50 shadow-xl"
-            >
-              <FaChevronLeft />
-            </button>
+            <div className="relative flex min-h-0 flex-1 items-center justify-center px-4 sm:px-20">
+              <motion.img
+                key={lightboxIndex}
+                initial={{ opacity: 0, scale: 0.97 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.25 }}
+                src={galleryImages[lightboxIndex].large}
+                srcSet={galleryImages[lightboxIndex].srcSet}
+                sizes="90vw"
+                alt={galleryImages[lightboxIndex].alt}
+                className="max-h-full max-w-full rounded-sm object-contain shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              />
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  prev();
+                }}
+                aria-label={t.lightboxPrev}
+                className="absolute left-2 hidden h-12 w-12 items-center justify-center rounded-sm bg-white/10 text-xl text-white transition-colors hover:bg-primary hover:text-on-primary sm:left-6 sm:flex"
+              >
+                <FaChevronLeft />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  next();
+                }}
+                aria-label={t.lightboxNext}
+                className="absolute right-2 hidden h-12 w-12 items-center justify-center rounded-sm bg-white/10 text-xl text-white transition-colors hover:bg-primary hover:text-on-primary sm:right-6 sm:flex"
+              >
+                <FaChevronRight />
+              </button>
+            </div>
 
-            <motion.img
-              key={lightboxIndex}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
-              src={galleryImages[lightboxIndex].large}
-              srcSet={galleryImages[lightboxIndex].srcSet}
-              sizes="90vw"
-              alt={galleryImages[lightboxIndex].alt}
-              className="max-h-[85vh] max-w-[90vw] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.5)]"
-              onClick={(e) => e.stopPropagation()}
-            />
-
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                lightboxNext();
-              }}
-              aria-label={t.lightboxNext}
-              className="absolute right-2 md:right-8 text-white/70 hover:text-primary text-3xl md:text-5xl bg-black/40 hover:bg-black/60 p-3 md:p-4 rounded-full transition-all z-50 shadow-xl"
-            >
-              <FaChevronRight />
-            </button>
+            <div className="flex items-center justify-between gap-4 p-4 sm:p-6" onClick={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                onClick={prev}
+                aria-label={t.lightboxPrev}
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm bg-white/10 text-white sm:hidden"
+              >
+                <FaChevronLeft />
+              </button>
+              <p className="flex-1 text-center text-sm text-white/75">{galleryImages[lightboxIndex].alt}</p>
+              <button
+                type="button"
+                onClick={next}
+                aria-label={t.lightboxNext}
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm bg-white/10 text-white sm:hidden"
+              >
+                <FaChevronRight />
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -159,7 +159,7 @@ const webManifest = () =>
 export const seoPlugin = (): Plugin => ({
   name: 'tkv-seo',
   transformIndexHtml: (html) =>
-    html.replace('%SITE_LANG%', esc(seo.lang)).replace('<!--seo-head-->', headHtml()),
+    html.replace('%SITE_LANG%', esc(seo.lang)).replace('%SITE_BRAND%', esc(siteData.brand)).replace('<!--seo-head-->', headHtml()),
   // Ve vývojovém režimu obsluhuje i manifest
   configureServer(server) {
     server.middlewares.use('/site.webmanifest', (_req, res) => {

@@ -1,34 +1,41 @@
 import { motion } from 'framer-motion';
 import { siteData } from '../config/siteData';
+import { fadeInUp, stagger } from '../utils/animations';
 import DynamicIcon from './DynamicIcon';
+import { Container, SectionHeader } from './ui';
 
 const Services = () => (
-  <section id="sluzby" className="py-20 bg-bgLight">
-    <div className="container mx-auto px-4">
-      {/* Nadpis jen pro vyhledávače a čtečky obrazovky (vizuálně skrytý) */}
-      <h2 className="sr-only">{siteData.servicesTitle}</h2>
-      <div className="grid md:grid-cols-3 gap-8">
+  <section id="sluzby" className="bg-concrete py-20 sm:py-28">
+    <Container>
+      <SectionHeader index="01" eyebrow={siteData.servicesEyebrow} title={siteData.servicesTitle} />
+      <motion.ul
+        variants={stagger(0.12)}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-60px' }}
+        className="grid gap-5 md:grid-cols-3"
+      >
         {siteData.services.map((service, index) => (
-          <motion.div
+          <motion.li
             key={service.id}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-50px' }}
-            variants={{
-              hidden: { opacity: 0, y: 30 },
-              visible: { opacity: 1, y: 0, transition: { delay: index * 0.2 } },
-            }}
-            className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow border-t-4 border-transparent hover:border-primary group"
+            variants={fadeInUp}
+            className="chamfer group relative flex flex-col bg-white p-8 transition-transform duration-300 hover:-translate-y-1"
           >
-            <div className="text-4xl text-primary mb-4 group-hover:scale-110 transition-transform">
-              <DynamicIcon name={service.icon} />
+            <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-primary transition-transform duration-300 group-hover:scale-x-100" />
+            <div className="flex items-start justify-between">
+              <span className="flex h-14 w-14 items-center justify-center rounded-sm bg-primary-soft text-2xl text-primary-strong">
+                <DynamicIcon name={service.icon} />
+              </span>
+              <span aria-hidden="true" className="font-display text-5xl font-bold leading-none text-line">
+                {String(index + 1).padStart(2, '0')}
+              </span>
             </div>
-            <h3 className="text-2xl font-bold mb-4 text-primary">{service.title}</h3>
-            <p className="text-textLight leading-relaxed">{service.desc}</p>
-          </motion.div>
+            <h3 className="mt-8 font-display text-2xl font-bold uppercase tracking-tight">{service.title}</h3>
+            <p className="mt-3 leading-relaxed text-muted">{service.desc}</p>
+          </motion.li>
         ))}
-      </div>
-    </div>
+      </motion.ul>
+    </Container>
   </section>
 );
 

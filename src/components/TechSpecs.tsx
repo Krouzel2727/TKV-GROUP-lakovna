@@ -1,61 +1,58 @@
 import { motion } from 'framer-motion';
 import { siteData } from '../config/siteData';
-import { fadeInUp } from '../utils/animations';
+import { fadeInUp, stagger } from '../utils/animations';
 import DynamicIcon from './DynamicIcon';
+import { Container, SectionHeader } from './ui';
 
+// Technické parametry ve formě „technického listu“
 const TechSpecs = () => {
-  const { title, cards, linkPrefix } = siteData.techSection;
+  const { eyebrow, title, lead, cards, linkPrefix } = siteData.techSection;
 
   return (
-    <section id="kapacita" className="py-20 bg-white">
-      <div className="container mx-auto px-4">
-        <motion.h2
-          variants={fadeInUp}
+    <section id="kapacita" className="bg-white py-20 sm:py-28">
+      <Container>
+        <SectionHeader index="02" eyebrow={eyebrow} title={title} lead={lead} />
+
+        <motion.dl
+          variants={stagger(0.06)}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
-          className="text-4xl font-bold text-center mb-16 text-primary"
+          viewport={{ once: true, margin: '-60px' }}
+          className="grid grid-cols-2 border-l border-t border-line lg:grid-cols-4"
         >
-          {title}
-        </motion.h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {cards.map((card, index) => (
+          {cards.map((card) => (
             <motion.div
               key={card.id}
               variants={fadeInUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="bg-bgLight p-6 rounded-2xl border border-gray-100 hover:border-primary transition-colors flex flex-col items-center text-center"
+              className="group relative flex flex-col border-b border-r border-line p-4 transition-colors hover:bg-concrete sm:p-7"
             >
-              <div className="bg-primary/20 p-4 rounded-full text-primary mb-4 text-2xl relative group cursor-pointer">
-                <DynamicIcon name={card.icon} />
-                {card.tooltip && (
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-dark text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-lg">
-                    {card.tooltip}
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-dark" />
-                  </div>
+              <span aria-hidden="true" className="absolute left-0 top-0 h-full w-0.5 scale-y-0 bg-primary transition-transform group-hover:scale-y-100" />
+              <DynamicIcon name={card.icon} className="text-xl text-primary-strong" />
+              <dt className="mt-4 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted sm:mt-5 sm:text-xs">{card.label}</dt>
+              <dd className="mt-1 font-display text-xl font-bold leading-tight text-ink sm:text-3xl">
+                {card.link ? (
+                  <>
+                    {linkPrefix}
+                    <a
+                      href={card.link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-primary-strong underline decoration-primary decoration-2 underline-offset-4 hover:decoration-primary-strong"
+                    >
+                      {card.value.replace(linkPrefix, '')}
+                    </a>
+                  </>
+                ) : (
+                  card.value
                 )}
-              </div>
-
-              <p className="text-sm text-textLight uppercase tracking-wider font-medium mb-1">{card.label}</p>
-
-              {card.link ? (
-                <div className="text-xl font-bold uppercase text-dark flex items-center gap-2">
-                  {linkPrefix}
-                  <a href={card.link} target="_blank" rel="noreferrer" className="text-primary hover:underline">
-                    {card.value.replace(linkPrefix, '')}
-                  </a>
-                </div>
-              ) : (
-                <p className="text-xl font-bold text-dark">{card.value}</p>
-              )}
+                {card.tooltip && (
+                  <span className="mt-2 block font-sans text-sm font-normal normal-case leading-snug text-muted">{card.tooltip}</span>
+                )}
+              </dd>
             </motion.div>
           ))}
-        </div>
-      </div>
+        </motion.dl>
+      </Container>
     </section>
   );
 };

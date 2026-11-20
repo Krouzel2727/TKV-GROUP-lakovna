@@ -4,6 +4,8 @@ Zdrojový kód webu **https://www.tkvgrouplakovna.cz**.
 
 Technologie: React 19 + TypeScript, Vite, Tailwind CSS v4, Framer Motion, React Icons, kontaktní formulář přes Web3Forms s ochranou hCaptcha.
 
+Web je postavený na **společném designovém systému TKV-GROUP**, který je připravený i pro web truhlárny (stejný kód, jiná akcentní barva).
+
 ## Spuštění
 
 Potřebujete Node.js 20.19+ (doporučeno 22 LTS).
@@ -68,6 +70,7 @@ src/
   entry-server.tsx         vykreslení stránky při buildu (prerender)
   utils/animations.ts      animace nájezdů
   utils/images.ts          responzivní varianty fotek
+  fonts.css                písmo nadpisů
   assets/                  logo a fotky (gallery/)
   components/
     Navbar.tsx             horní menu + mobilní menu
@@ -75,18 +78,34 @@ src/
     Services.tsx           3 karty služeb
     TechSpecs.tsx          parametry technologie (#kapacita)
     NewHall.tsx            Rozšiřujeme výrobu
-    Gallery.tsx            galerie s posuvníkem a zvětšením
+    Gallery.tsx            galerie (mřížka) se zvětšeným náhledem
     References.tsx         běžící pás TOP zákazníků
     CtaSection.tsx         odkaz na TKV Truhlárnu
     Contact.tsx            kontakty, mapa, formulář
     Footer.tsx             patička
+    FloatingCall.tsx       plovoucí tlačítko „Zavolat“ (mobil)
+    ui.tsx, buttons.ts     sdílené prvky designového systému
     DynamicIcon.tsx        vykreslení ikony podle názvu
     icons.ts               seznam ikon použitelných v siteData
 ```
 
-## Barvy
+## Designový systém TKV-GROUP (lakovna + truhlárna)
 
-Definované v `src/index.css` (`@theme`): `primary` #92d050, `dark` #242222, `bgLight` #f1f5f9, `textMain` #595959, `textLight` #a6a6a6.
+Obě divize sdílejí jeden vizuální jazyk, liší se jen **akcentní barvou**:
+
+| Divize | Akcent | Text na světlém | `siteData.brand` |
+|---|---|---|---|
+| Prášková lakovna | #92d050 (zelená z loga) | #3f6e12 | `lakovna` |
+| Truhlárna | #f39a1e (oranžová z webu tkv-redice.cz) | #94500a | `truhlarna` |
+
+- **Barvy** jsou v `src/index.css` (`@theme`): neutrální základ (ink, body, muted, line, concrete, graphite, steel) + akcent `primary` / `primary-strong` / `primary-soft` / `on-primary`. Všechny kombinace splňují kontrast WCAG AA.
+- **Přepnutí divize:** `brand` v `siteData.ts` (propisuje se jako `data-brand` na `<html>`). Atribut `data-brand` lze dát i na jednu sekci (tak je zobrazen proklik na truhlárnu).
+- **Náhled stylu truhlárny při vývoji:** `npm run dev` a otevřít `http://localhost:5173/?brand=truhlarna`.
+- **Písma:** nadpisy *Barlow Condensed 700* (self-hosted, `src/fonts.css`), text systémové písmo zařízení (nic se nestahuje).
+- **Tvarosloví:** hranaté prvky se zkoseným rohem (`chamfer`) podle loga, technická mřížka na tmavých sekcích (`bg-blueprint`), číslované sekce (`01 — Služby`).
+- **Sdílené komponenty:** `src/components/ui.tsx` (Container, Eyebrow, SectionHeader) a `src/components/buttons.ts` (tlačítka).
+
+Web truhlárny = kopie tohoto projektu, `brand: 'truhlarna'`, vlastní texty v `siteData.ts` a fotky v `src/assets/gallery`.
 
 ## Nasazení
 
