@@ -35,7 +35,7 @@ const Navbar = () => {
             <img
               src={logo}
               alt={siteData.navbar.logoAlt}
-              width={781}
+              width={992}
               height={196}
               className="h-10 md:h-14 w-auto object-contain transition-all duration-300"
             />

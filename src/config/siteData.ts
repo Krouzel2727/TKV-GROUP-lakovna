@@ -67,7 +67,7 @@ export const siteData = {
     { label: `Kontakt`, href: `#kontakt` },
   ],
   navbar: {
-    logoAlt: `TKV-GROUP`,
+    logoAlt: `TKV-GROUP s.r.o.`,
     menuToggleLabel: `Přepnout menu`,
     navLabel: `Hlavní navigace`,
     mobileCta: `Poptat lakování`,
