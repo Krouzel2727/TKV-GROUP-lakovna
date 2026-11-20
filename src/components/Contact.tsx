@@ -90,49 +90,50 @@ const Contact = () => {
   };
 
   const people = [contacts.roman, contacts.jakub];
-  const columnCls = 'p-7 sm:p-8';
-  const nameCls = 'font-display text-2xl font-bold uppercase tracking-tight text-white';
-  const lineCls = 'flex items-start gap-3';
-  const iconCls = 'mt-1 shrink-0 text-primary';
+  // Iniciály do čtverečku u kontaktní osoby (např. "RJ")
+  const initials = (name: string) =>
+    name
+      .split(' ')
+      .map((part) => part[0])
+      .join('');
 
   return (
-    <section id="kontakt" className="bg-blueprint-light bg-concrete py-20 sm:py-28">
+    <section id="kontakt" className="bg-concrete py-20 sm:py-28">
       <Container>
         <SectionHeader index="05" title={cs.title} />
 
-        {/* Provozovna a kontaktní osoby pohromadě v jednom panelu */}
+        {/* Provozovna – samostatný tmavý panel */}
         <motion.div
           variants={fadeInUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-60px' }}
-          className={`${card.dark} bg-blueprint grid divide-y divide-steel-line md:grid-cols-3 md:divide-x md:divide-y-0`}
+          className={`${card.dark} flex flex-col gap-6 p-6 sm:p-8 lg:flex-row lg:items-center lg:gap-10`}
         >
-          <div className={columnCls}>
-            <h3 className={nameCls}>
-              <a href={mapsLink} target="_blank" rel="noopener noreferrer" title={cs.navigateTitle} className="hover:text-primary">
-                {contacts.hala1.name}
+          <div className="flex items-center gap-5">
+            <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-sm bg-primary text-2xl text-ink">
+              <FaMapMarkerAlt aria-hidden="true" />
+            </span>
+            <div>
+              <h3 className="font-display text-sm font-bold uppercase tracking-[0.18em] text-primary">{contacts.hala1.name}</h3>
+              <a
+                href={mapsLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={cs.navigateTitle}
+                className="mt-1 block font-display text-2xl font-bold uppercase tracking-tight text-white hover:text-primary sm:text-3xl"
+              >
+                {contacts.hala1.adres}
               </a>
-            </h3>
-            <ul className="mt-5 space-y-3">
-              <li className={lineCls}>
-                <FaMapMarkerAlt aria-hidden="true" className={iconCls} />
-                <a
-                  href={mapsLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title={cs.navigateTitle}
-                  className="font-semibold text-white underline decoration-primary decoration-2 underline-offset-4 hover:text-primary"
-                >
-                  {contacts.hala1.adres}
-                </a>
-              </li>
-              <li className={lineCls}>
-                <FaClock aria-hidden="true" className={iconCls} />
-                <span>{contacts.hala1.open}</span>
-              </li>
-            </ul>
-            <p className="mt-5 text-sm text-silver">
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2 text-silver sm:flex-row sm:gap-8 lg:ml-auto lg:flex-col lg:gap-1.5 lg:border-l lg:border-steel-line lg:pl-10">
+            <p className="flex items-center gap-2.5 font-semibold text-white">
+              <FaClock aria-hidden="true" className="text-primary" />
+              {contacts.hala1.open}
+            </p>
+            <p className="text-sm">
               <span className="font-semibold text-primary">{cs.icoLabel}</span> {contacts.hala1.ico}
               <span aria-hidden="true" className="mx-2 text-steel-line">
                 |
@@ -141,26 +142,49 @@ const Contact = () => {
             </p>
           </div>
 
-          {people.map((person) => (
-            <div key={person.name} className={columnCls}>
-              <h3 className={nameCls}>{person.name}</h3>
-              <ul className="mt-5 space-y-3">
-                <li className={lineCls}>
-                  <FaPhoneAlt aria-hidden="true" className={iconCls} />
-                  <a href={`tel:${person.phone.replace(/\s+/g, '')}`} className="font-semibold text-white hover:text-primary">
-                    {person.phone}
-                  </a>
-                </li>
-                <li className={lineCls}>
-                  <FaEnvelope aria-hidden="true" className={iconCls} />
-                  <a href={`mailto:${person.email}`} className="break-all text-silver hover:text-primary">
-                    {person.email}
-                  </a>
-                </li>
-              </ul>
-            </div>
-          ))}
+          <a href={mapsLink} target="_blank" rel="noopener noreferrer" className={`${btn.primary} shrink-0 self-start lg:self-auto`}>
+            {cs.navigateTitle} <span aria-hidden="true">↗</span>
+          </a>
         </motion.div>
+
+        {/* Kontaktní osoby – světlé karty, jedna vlevo, druhá vpravo */}
+        <div className="mt-6 grid gap-6 md:grid-cols-2">
+          {people.map((person, i) => (
+            <motion.div
+              key={person.name}
+              variants={fadeInUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ delay: i * 0.1 }}
+              className={`${card.light} flex items-center gap-5 p-6 sm:p-7`}
+            >
+              <span
+                aria-hidden="true"
+                className="flex h-16 w-16 shrink-0 items-center justify-center rounded-sm bg-concrete font-display text-2xl font-bold text-ink"
+              >
+                {initials(person.name)}
+              </span>
+              <div className="min-w-0">
+                <h3 className="font-display text-xl font-bold uppercase tracking-tight text-ink">{person.name}</h3>
+                <a
+                  href={`tel:${person.phone.replace(/\s+/g, '')}`}
+                  className="mt-1 flex items-center gap-2.5 font-display text-2xl font-bold text-ink decoration-primary decoration-2 underline-offset-4 hover:underline sm:text-3xl"
+                >
+                  <FaPhoneAlt aria-hidden="true" className="text-base text-primary" />
+                  {person.phone}
+                </a>
+                <a
+                  href={`mailto:${person.email}`}
+                  className="mt-1 flex items-center gap-2.5 break-all text-body decoration-primary decoration-2 underline-offset-4 hover:text-ink hover:underline"
+                >
+                  <FaEnvelope aria-hidden="true" className="shrink-0 text-sm text-primary" />
+                  {person.email}
+                </a>
+              </div>
+            </motion.div>
+          ))}
+        </div>
 
         {/* Mapa vedle formuláře */}
         <motion.div

@@ -6,7 +6,7 @@ import { Container, SectionHeader } from './ui';
 import { card } from './buttons';
 
 const Services = () => (
-  <section id="sluzby" className="bg-blueprint-light bg-concrete py-20 sm:py-28">
+  <section id="sluzby" className="bg-concrete py-20 sm:py-28">
     <Container>
       <SectionHeader index="01" title={siteData.nav[0].label} />
       <motion.ul

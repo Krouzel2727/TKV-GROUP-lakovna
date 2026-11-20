@@ -30,7 +30,8 @@ const Gallery = () => {
   const trackRef = useRef<HTMLUListElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const [position, setPosition] = useState({ index: 0, visible: 1, atStart: true, atEnd: false });
-  const [paused, setPaused] = useState(false);
+  const [paused, setPaused] = useState(false); // myš nad galerií
+  const [interaction, setInteraction] = useState(0); // po ručním posunu se odpočet spustí znovu
   const [inView, setInView] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const touchStartX = useRef<number | null>(null);
@@ -48,7 +49,10 @@ const Gallery = () => {
     });
   }, []);
 
-  const scrollByItems = (n: number) => trackRef.current?.scrollBy({ left: n * getStep(trackRef.current), behavior: 'smooth' });
+  const scrollByItems = (n: number) => {
+    setInteraction((i) => i + 1);
+    trackRef.current?.scrollBy({ left: n * getStep(trackRef.current), behavior: 'smooth' });
+  };
 
   // Sledování posunu pásu (šipky, swipe, kolečko myši)
   useEffect(() => {
@@ -81,17 +85,20 @@ const Gallery = () => {
     return () => observer.disconnect();
   }, []);
 
+  // Fotky se posouvají samy po t.autoplayMs. Zastaví se jen při najetí myší a v otevřeném náhledu;
+  // po ručním posunu (šipky, swipe) se odpočet spustí znovu. Při omezených animacích v systému
+  // se fotky posunou bez plynulé animace.
   useEffect(() => {
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!t.autoplayMs || reduced || paused || !inView || lightboxIndex !== null) return;
+    if (!t.autoplayMs || paused || !inView || lightboxIndex !== null) return;
+    const behavior: ScrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
     const timer = setInterval(() => {
       const track = trackRef.current;
       if (!track) return;
-      if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 4) track.scrollTo({ left: 0, behavior: 'smooth' });
-      else track.scrollBy({ left: getStep(track), behavior: 'smooth' });
+      if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 4) track.scrollTo({ left: 0, behavior });
+      else track.scrollBy({ left: getStep(track), behavior });
     }, t.autoplayMs);
     return () => clearInterval(timer);
-  }, [t.autoplayMs, paused, inView, lightboxIndex]);
+  }, [t.autoplayMs, paused, inView, lightboxIndex, interaction]);
 
   // --- Lightbox ---
   const open = (index: number, trigger: HTMLElement) => {
@@ -137,7 +144,7 @@ const Gallery = () => {
   const progress = (shownTo / total) * 100;
 
   return (
-    <section ref={sectionRef} id="reference" className="bg-blueprint-light overflow-hidden bg-concrete py-20 sm:py-28">
+    <section ref={sectionRef} id="reference" className="overflow-hidden bg-concrete py-20 sm:py-28">
       <Container>
         <div className="flex items-end justify-between gap-6">
           <SectionHeader index="04" title={t.title} />
@@ -155,11 +162,10 @@ const Gallery = () => {
         <ul
           ref={trackRef}
           className="scrollbar-none -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 sm:mx-0 sm:scroll-px-0 sm:px-0"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onFocus={() => setPaused(true)}
-          onBlur={() => setPaused(false)}
-          onTouchStart={() => setPaused(true)}
+          onPointerEnter={(e) => e.pointerType === 'mouse' && setPaused(true)}
+          onPointerLeave={(e) => e.pointerType === 'mouse' && setPaused(false)}
+          onTouchStart={() => setInteraction((i) => i + 1)}
+          onWheel={() => setInteraction((i) => i + 1)}
         >
           {galleryImages.map((image, idx) => (
             <li key={image.src} className="w-[85%] shrink-0 snap-start sm:w-[calc((100%-1rem)/2)] lg:w-[calc((100%-2rem)/3)]">
