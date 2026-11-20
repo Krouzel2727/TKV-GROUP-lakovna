@@ -11,7 +11,7 @@ const TechSpecs = () => {
   return (
     <section id="kapacita" className="bg-white py-20 sm:py-28">
       <Container>
-        <SectionHeader index="02" title={title} />
+        <SectionHeader title={title} />
 
         <motion.dl
           variants={stagger(0.06)}

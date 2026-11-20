@@ -97,7 +97,7 @@ const Contact = () => {
       <Container>
         {/* Nadpis vlevo, telefony na Romana a Kubu vpravo */}
         <div className="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
-          <SectionHeader index="05" title={cs.title} />
+          <SectionHeader title={cs.title} />
           <motion.ul
             variants={fadeInUp}
             initial="hidden"

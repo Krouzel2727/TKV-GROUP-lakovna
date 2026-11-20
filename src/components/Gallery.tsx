@@ -173,7 +173,7 @@ const Gallery = () => {
     <section ref={sectionRef} id="reference" className="overflow-hidden bg-concrete py-20 sm:py-28">
       <Container>
         <div className="flex items-end justify-between gap-6">
-          <SectionHeader index="04" title={t.title} />
+          <SectionHeader title={t.title} />
           <div className="mb-12 hidden gap-2 sm:flex">
             <button type="button" onClick={() => scrollByItems(-1)} disabled={position.atStart} aria-label={t.prevLabel} className={arrowCls}>
               <FaChevronLeft />

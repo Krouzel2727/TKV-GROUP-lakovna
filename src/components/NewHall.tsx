@@ -10,7 +10,7 @@ const NewHall = () => {
   return (
     <section className="bg-blueprint relative bg-graphite py-20 text-white sm:py-28">
       <Container>
-        <SectionHeader index="03" title={title} lead={subtitle} dark />
+        <SectionHeader title={title} lead={subtitle} dark />
 
         <div className="grid gap-5 lg:grid-cols-2">
           {halls.map((hall, index) => (
@@ -23,10 +23,7 @@ const NewHall = () => {
               transition={{ delay: index * 0.12 }}
               className={`${card.dark} p-8 sm:p-10`}
             >
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <span aria-hidden="true" className="font-display text-sm font-semibold uppercase tracking-[0.18em] text-silver">
-                  {String(index + 1).padStart(2, '0')} / {String(halls.length).padStart(2, '0')}
-                </span>
+              <div className="flex">
                 <span className="rounded-sm border border-primary/60 bg-primary/15 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-primary">
                   {badge}
                 </span>
