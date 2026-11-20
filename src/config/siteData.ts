@@ -179,7 +179,7 @@ export const siteData = {
     title: `Reference`,
     prevLabel: `Předchozí fotky`,
     nextLabel: `Další fotky`,
-    autoplayMs: 4500, // automatický posun galerie (ms); 0 = vypnuto
+    autoplayMs: 2500, // automatický posun galerie (ms); 0 = vypnuto
     openLabel: `Zvětšit fotku`,
     lightboxClose: `Zavřít náhled`,
     lightboxPrev: `Předchozí fotka`,

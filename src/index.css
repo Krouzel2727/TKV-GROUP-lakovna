@@ -70,6 +70,16 @@
   background-size: 40px 40px;
 }
 
+/* Odpočet do dalšího posunu galerie (šířka segmentu se předává v --seg) */
+@keyframes gallery-timer {
+  from {
+    width: 0;
+  }
+  to {
+    width: var(--seg);
+  }
+}
+
 /* Skrytý posuvník (vodorovná galerie) */
 @utility scrollbar-none {
   scrollbar-width: none;

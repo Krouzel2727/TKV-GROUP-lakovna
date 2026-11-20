@@ -32,6 +32,8 @@ const Gallery = () => {
   const [position, setPosition] = useState({ index: 0, visible: 1, atStart: true, atEnd: false });
   const [paused, setPaused] = useState(false); // myš nad galerií
   const [interaction, setInteraction] = useState(0); // po ručním posunu se odpočet spustí znovu
+  const [tick, setTick] = useState(0); // počet automatických posunů (restartuje odpočet i časovou linku)
+  const [visibleItems, setVisibleItems] = useState<Set<number>>(() => new Set([0, 1, 2]));
   const [inView, setInView] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const touchStartX = useRef<number | null>(null);
@@ -88,17 +90,41 @@ const Gallery = () => {
   // Fotky se posouvají samy po t.autoplayMs. Zastaví se jen při najetí myší a v otevřeném náhledu;
   // po ručním posunu (šipky, swipe) se odpočet spustí znovu. Při omezených animacích v systému
   // se fotky posunou bez plynulé animace.
+  const autoplayActive = !!t.autoplayMs && !paused && inView && lightboxIndex === null;
   useEffect(() => {
-    if (!t.autoplayMs || paused || !inView || lightboxIndex !== null) return;
+    if (!autoplayActive) return;
     const behavior: ScrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
-    const timer = setInterval(() => {
+    const timer = setTimeout(() => {
       const track = trackRef.current;
       if (!track) return;
       if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 4) track.scrollTo({ left: 0, behavior });
       else track.scrollBy({ left: getStep(track), behavior });
+      setTick((n) => n + 1);
     }, t.autoplayMs);
-    return () => clearInterval(timer);
-  }, [t.autoplayMs, paused, inView, lightboxIndex, interaction]);
+    return () => clearTimeout(timer);
+  }, [t.autoplayMs, autoplayActive, interaction, tick]);
+
+  // Které fotky jsou v pásu právě vidět (fotky na okraji jsou potlačené, vjíždějící se „rozsvítí“)
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setVisibleItems((prev) => {
+          const nextSet = new Set(prev);
+          for (const entry of entries) {
+            const idx = Number((entry.target as HTMLElement).dataset.index);
+            if (entry.isIntersecting) nextSet.add(idx);
+            else nextSet.delete(idx);
+          }
+          return nextSet;
+        });
+      },
+      { root: track, threshold: 0.6 },
+    );
+    Array.from(track.children).forEach((child) => observer.observe(child));
+    return () => observer.disconnect();
+  }, []);
 
   // --- Lightbox ---
   const open = (index: number, trigger: HTMLElement) => {
@@ -168,7 +194,13 @@ const Gallery = () => {
           onWheel={() => setInteraction((i) => i + 1)}
         >
           {galleryImages.map((image, idx) => (
-            <li key={image.src} className="w-[85%] shrink-0 snap-start sm:w-[calc((100%-1rem)/2)] lg:w-[calc((100%-2rem)/3)]">
+            <li
+              key={image.src}
+              data-index={idx}
+              className={`w-[85%] shrink-0 snap-start transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none sm:w-[calc((100%-1rem)/2)] lg:w-[calc((100%-2rem)/3)] ${
+                visibleItems.has(idx) ? 'scale-100 opacity-100' : 'scale-[0.94] opacity-40'
+              }`}
+            >
               <button
                 type="button"
                 onClick={(e) => open(idx, e.currentTarget)}
@@ -184,7 +216,9 @@ const Gallery = () => {
                   alt={image.alt}
                   loading="lazy"
                   decoding="async"
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  className={`h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105 motion-reduce:transition-none ${
+                    visibleItems.has(idx) ? 'scale-100' : 'scale-110'
+                  }`}
                 />
                 <span
                   aria-hidden="true"
@@ -200,11 +234,26 @@ const Gallery = () => {
 
         {/* Ukazatel postupu */}
         <div className="mt-8 flex items-center gap-5">
-          <span className="font-display text-lg font-bold tabular-nums text-ink" aria-live="polite">
+          <span className="font-display text-lg font-bold tabular-nums text-ink">
             {pad(shownTo)} <span className="text-body">/ {pad(total)}</span>
           </span>
-          <div className="h-0.5 flex-1 bg-silver/40">
+          <div className="relative h-0.5 flex-1 bg-silver/40">
             <div className="h-full bg-primary transition-[width] duration-500" style={{ width: `${progress}%` }} />
+            {/* Odpočet do dalšího posunu – dorůstá k další fotce */}
+            {autoplayActive && shownTo < total && (
+              <div
+                key={`${tick}-${interaction}`}
+                aria-hidden="true"
+                className="absolute top-0 h-full bg-primary/50"
+                style={
+                  {
+                    left: `${progress}%`,
+                    '--seg': `${100 / total}%`,
+                    animation: `gallery-timer ${t.autoplayMs}ms linear forwards`,
+                  } as React.CSSProperties
+                }
+              />
+            )}
           </div>
           <div className="flex gap-2 sm:hidden">
             <button type="button" onClick={() => scrollByItems(-1)} disabled={position.atStart} aria-label={t.prevLabel} className={arrowCls}>
