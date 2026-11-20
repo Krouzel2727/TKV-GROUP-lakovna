@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { siteData } from '../config/siteData';
 import { fadeInUp } from '../utils/animations';
 import { Container, SectionHeader } from './ui';
+import { card } from './buttons';
 
 const NewHall = () => {
   const { title, subtitle, halls, badge } = siteData.newHallSection;
@@ -20,7 +21,7 @@ const NewHall = () => {
               whileInView="visible"
               viewport={{ once: true, margin: '-60px' }}
               transition={{ delay: index * 0.12 }}
-              className="chamfer group relative border border-steel-line bg-steel p-8 transition-colors hover:border-primary sm:p-10"
+              className={`${card.dark} p-8 sm:p-10`}
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <span aria-hidden="true" className="font-display text-sm font-semibold uppercase tracking-[0.18em] text-silver">

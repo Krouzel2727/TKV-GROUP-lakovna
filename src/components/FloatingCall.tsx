@@ -25,7 +25,7 @@ const FloatingCall = () => {
       aria-label={`${siteData.floatingCall.label}: ${phone}`}
       tabIndex={visible ? undefined : -1}
       aria-hidden={visible ? undefined : true}
-      className={`fixed bottom-5 right-5 z-40 flex items-center gap-2 rounded-full bg-primary px-5 py-3.5 font-semibold text-on-primary shadow-[0_12px_30px_-8px_rgb(0_0_0/0.45)] transition-all duration-300 md:hidden ${
+      className={`fixed bottom-5 right-5 z-40 flex items-center gap-2 rounded-sm bg-primary px-5 py-3.5 font-semibold text-on-primary shadow-[0_12px_30px_-8px_rgb(0_0_0/0.45)] transition-all duration-300 md:hidden ${
         visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-6 opacity-0'
       }`}
     >

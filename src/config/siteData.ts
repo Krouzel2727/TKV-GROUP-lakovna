@@ -100,8 +100,6 @@ export const siteData = {
     subtitle: `Práškové lakování je moderní metoda povrchové úpravy kovových materiálů, které zajistí kvalitní, odolný a jednolitý povrch lakovaných dílců.`,
     btnPrimary: `Poptat lakování`,
     btnSecondary: `Kontakt`,
-    // Parametry zobrazené pod tlačítky – čísla karet ze sekce Technologie (techSection.cards)
-    factCardIds: [6, 5, 1, 4],
     slideLabel: `Zobrazit fotku`, // + číslo
   },
 
@@ -179,9 +177,9 @@ export const siteData = {
   // --- Galerie (fotky jsou v src/assets/gallery, pořadí v components/Gallery.tsx) ---
   gallerySection: {
     title: `Reference`,
-    initialCount: 9, // kolik fotek je vidět před kliknutím na "Zobrazit všechny"
-    showAll: `Zobrazit všechny fotky`, // + počet
-    showLess: `Zobrazit méně`,
+    prevLabel: `Předchozí fotky`,
+    nextLabel: `Další fotky`,
+    autoplayMs: 4500, // automatický posun galerie (ms); 0 = vypnuto
     openLabel: `Zvětšit fotku`,
     lightboxClose: `Zavřít náhled`,
     lightboxPrev: `Předchozí fotka`,

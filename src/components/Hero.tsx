@@ -6,10 +6,6 @@ import { btn } from './buttons';
 
 // Fotky, které se střídají na pozadí úvodní sekce (nastavení v siteData.hero.images)
 const heroImages = siteData.hero.images.map((name) => getImage(name));
-// Parametry pod tlačítky = vybrané karty ze sekce Technologie
-const facts = siteData.hero.factCardIds
-  .map((id) => siteData.techSection.cards.find((card) => card.id === id))
-  .filter((card) => card !== undefined);
 const INTERVAL = 6000;
 
 const Hero = () => {
@@ -84,23 +80,10 @@ const Hero = () => {
         </div>
       </Container>
 
-      {/* Klíčová fakta + přepínání fotek */}
+      {/* Přepínání fotek na pozadí */}
       <Container className="relative z-10 pb-8">
         <div className="animate-rise-in [animation-delay:360ms]">
-          <dl className="grid grid-cols-2 border-t border-steel-line sm:grid-cols-4">
-            {facts.map((fact, i) => (
-              <div
-                key={fact.id}
-                className={`flex flex-col-reverse justify-end border-steel-line py-5 pr-4 sm:border-t-0 sm:pl-6 ${
-                  i % 2 === 1 ? 'border-l pl-4' : ''
-                } ${i > 1 ? 'border-t' : ''} ${i === 0 ? 'sm:pl-0' : 'sm:border-l'}`}
-              >
-                <dt className="mt-1 text-sm text-silver">{fact.label}</dt>
-                <dd className="font-display text-2xl font-bold text-white sm:text-4xl">{fact.value}</dd>
-              </div>
-            ))}
-          </dl>
-          <div className="mt-2 flex justify-end gap-1">
+          <div className="flex justify-end gap-1">
             {heroImages.map((_, i) => (
               <button
                 key={i}

@@ -5,7 +5,7 @@ import { FaPhoneAlt, FaEnvelope, FaClock, FaMapMarkerAlt, FaCheckCircle, FaExcla
 import { siteData } from '../config/siteData';
 import { fadeInUp } from '../utils/animations';
 import { Container, SectionHeader } from './ui';
-import { btn } from './buttons';
+import { btn, card } from './buttons';
 
 // Klíče jsou v souboru .env (viz .env.example)
 const WEB3FORMS_ACCESS_KEY = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY ?? '';
@@ -90,82 +90,100 @@ const Contact = () => {
   };
 
   const people = [contacts.roman, contacts.jakub];
+  const columnCls = 'p-7 sm:p-8';
+  const nameCls = 'font-display text-2xl font-bold uppercase tracking-tight text-white';
+  const lineCls = 'flex items-start gap-3';
+  const iconCls = 'mt-1 shrink-0 text-primary';
 
   return (
-    <section id="kontakt" className="bg-concrete py-20 sm:py-28">
+    <section id="kontakt" className="bg-blueprint-light bg-concrete py-20 sm:py-28">
       <Container>
         <SectionHeader index="05" title={cs.title} />
 
-        <div className="grid gap-6 lg:grid-cols-12">
-          {/* Kontaktní údaje */}
-          <motion.div
-            variants={fadeInUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
-            className="space-y-6 lg:col-span-5"
-          >
-            <div className="chamfer bg-graphite p-7 text-white sm:p-8">
-              <h3 className="font-display text-2xl font-bold uppercase tracking-tight text-white">
-                <a href={mapsLink} target="_blank" rel="noopener noreferrer" title={cs.navigateTitle} className="hover:text-primary">
-                  {contacts.hala1.name}
+        {/* Provozovna a kontaktní osoby pohromadě v jednom panelu */}
+        <motion.div
+          variants={fadeInUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+          className={`${card.dark} bg-blueprint grid divide-y divide-steel-line md:grid-cols-3 md:divide-x md:divide-y-0`}
+        >
+          <div className={columnCls}>
+            <h3 className={nameCls}>
+              <a href={mapsLink} target="_blank" rel="noopener noreferrer" title={cs.navigateTitle} className="hover:text-primary">
+                {contacts.hala1.name}
+              </a>
+            </h3>
+            <ul className="mt-5 space-y-3">
+              <li className={lineCls}>
+                <FaMapMarkerAlt aria-hidden="true" className={iconCls} />
+                <a
+                  href={mapsLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={cs.navigateTitle}
+                  className="font-semibold text-white underline decoration-primary decoration-2 underline-offset-4 hover:text-primary"
+                >
+                  {contacts.hala1.adres}
                 </a>
-              </h3>
-              <ul className="mt-6 space-y-4">
-                <li className="flex items-start gap-4">
-                  <FaMapMarkerAlt aria-hidden="true" className="mt-0.5 shrink-0 text-lg text-primary" />
-                  <a
-                    href={mapsLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={cs.navigateTitle}
-                    className="font-medium text-white underline decoration-primary decoration-2 underline-offset-4 hover:text-primary"
-                  >
-                    {contacts.hala1.adres}
-                  </a>
-                </li>
-                <li className="flex items-start gap-4">
-                  <FaClock aria-hidden="true" className="mt-0.5 shrink-0 text-lg text-primary" />
-                  <span className="font-medium">{contacts.hala1.open}</span>
-                </li>
-              </ul>
-              <p className="mt-6 border-t border-steel-line pt-5 text-sm text-silver">
-                <span className="font-semibold text-primary">{cs.icoLabel}</span> {contacts.hala1.ico}
-                <span aria-hidden="true" className="mx-3 text-steel-line">
-                  |
-                </span>
-                <span className="font-semibold text-primary">{cs.dicLabel}</span> {contacts.hala1.dico}
-              </p>
-            </div>
+              </li>
+              <li className={lineCls}>
+                <FaClock aria-hidden="true" className={iconCls} />
+                <span>{contacts.hala1.open}</span>
+              </li>
+            </ul>
+            <p className="mt-5 text-sm text-silver">
+              <span className="font-semibold text-primary">{cs.icoLabel}</span> {contacts.hala1.ico}
+              <span aria-hidden="true" className="mx-2 text-steel-line">
+                |
+              </span>
+              <span className="font-semibold text-primary">{cs.dicLabel}</span> {contacts.hala1.dico}
+            </p>
+          </div>
 
-            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-              {people.map((person) => (
-                <li key={person.name} className="border-l-4 border-primary bg-white p-5">
-                  <p className="font-display text-xl font-bold uppercase tracking-tight text-ink">{person.name}</p>
-                  <a href={`tel:${person.phone.replace(/\s+/g, '')}`} className="mt-3 flex items-center gap-2 font-semibold text-ink hover:underline hover:decoration-primary hover:decoration-2 hover:underline-offset-4">
-                    <FaPhoneAlt aria-hidden="true" className="text-sm text-primary" />
+          {people.map((person) => (
+            <div key={person.name} className={columnCls}>
+              <h3 className={nameCls}>{person.name}</h3>
+              <ul className="mt-5 space-y-3">
+                <li className={lineCls}>
+                  <FaPhoneAlt aria-hidden="true" className={iconCls} />
+                  <a href={`tel:${person.phone.replace(/\s+/g, '')}`} className="font-semibold text-white hover:text-primary">
                     {person.phone}
                   </a>
-                  <a href={`mailto:${person.email}`} className="mt-1.5 flex items-center gap-2 break-all text-sm text-body hover:text-ink hover:underline hover:decoration-primary hover:decoration-2 hover:underline-offset-4">
-                    <FaEnvelope aria-hidden="true" className="shrink-0 text-sm text-primary" />
+                </li>
+                <li className={lineCls}>
+                  <FaEnvelope aria-hidden="true" className={iconCls} />
+                  <a href={`mailto:${person.email}`} className="break-all text-silver hover:text-primary">
                     {person.email}
                   </a>
                 </li>
-              ))}
-            </ul>
-          </motion.div>
+              </ul>
+            </div>
+          ))}
+        </motion.div>
 
-          {/* Formulář */}
-          <motion.div
-            variants={fadeInUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ delay: 0.1 }}
-            id="formular"
-            ref={formWrapRef}
-            className="scroll-mt-28 bg-white p-6 shadow-[0_30px_60px_-30px_rgb(0_0_0/0.25)] sm:p-10 lg:col-span-7"
-          >
+        {/* Mapa vedle formuláře */}
+        <motion.div
+          variants={fadeInUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+          className={`${card.light} mt-6 grid overflow-hidden lg:grid-cols-2`}
+        >
+          <div className="min-h-[360px] bg-concrete lg:min-h-full">
+            <iframe
+              src={contacts.mapUrl}
+              width="100%"
+              height="100%"
+              style={{ border: 0, minHeight: 360 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title={cs.mapTitle}
+            />
+          </div>
+
+          <div id="formular" ref={formWrapRef} className="scroll-mt-28 p-6 sm:p-10">
             <h3 className="font-display text-3xl font-bold uppercase tracking-tight">{cs.formTitle}</h3>
             <form ref={formRef} onSubmit={onSubmit} onFocus={() => setLoadCaptcha(true)} className="mt-8 space-y-5">
               <input type="hidden" name="access_key" value={WEB3FORMS_ACCESS_KEY} />
@@ -173,30 +191,69 @@ const Contact = () => {
               <div className="grid gap-5 sm:grid-cols-2">
                 <div>
                   <label htmlFor="f-name" className={labelClass}>
-                    {cs.labels.name} <span aria-hidden="true" className="text-body">*</span>
+                    {cs.labels.name}{' '}
+                    <span aria-hidden="true" className="text-body">
+                      *
+                    </span>
                   </label>
-                  <input id="f-name" type="text" name="name" autoComplete="name" required className={inputClass} placeholder={cs.placeholders.name} />
+                  <input
+                    id="f-name"
+                    type="text"
+                    name="name"
+                    autoComplete="name"
+                    required
+                    className={inputClass}
+                    placeholder={cs.placeholders.name}
+                  />
                 </div>
                 <div>
                   <label htmlFor="f-phone" className={labelClass}>
                     {cs.labels.phone}
                   </label>
-                  <input id="f-phone" type="tel" name="phone" autoComplete="tel" className={inputClass} placeholder={cs.placeholders.phone} />
+                  <input
+                    id="f-phone"
+                    type="tel"
+                    name="phone"
+                    autoComplete="tel"
+                    className={inputClass}
+                    placeholder={cs.placeholders.phone}
+                  />
                 </div>
               </div>
 
               <div>
                 <label htmlFor="f-email" className={labelClass}>
-                  {cs.labels.email} <span aria-hidden="true" className="text-body">*</span>
+                  {cs.labels.email}{' '}
+                  <span aria-hidden="true" className="text-body">
+                    *
+                  </span>
                 </label>
-                <input id="f-email" type="email" name="email" autoComplete="email" required className={inputClass} placeholder={cs.placeholders.email} />
+                <input
+                  id="f-email"
+                  type="email"
+                  name="email"
+                  autoComplete="email"
+                  required
+                  className={inputClass}
+                  placeholder={cs.placeholders.email}
+                />
               </div>
 
               <div>
                 <label htmlFor="f-message" className={labelClass}>
-                  {cs.labels.message} <span aria-hidden="true" className="text-body">*</span>
+                  {cs.labels.message}{' '}
+                  <span aria-hidden="true" className="text-body">
+                    *
+                  </span>
                 </label>
-                <textarea id="f-message" name="message" rows={5} required className={`${inputClass} resize-y`} placeholder={cs.placeholders.message} />
+                <textarea
+                  id="f-message"
+                  name="message"
+                  rows={5}
+                  required
+                  className={`${inputClass} resize-y`}
+                  placeholder={cs.placeholders.message}
+                />
               </div>
 
               <div className="flex items-start gap-3">
@@ -231,7 +288,9 @@ const Contact = () => {
                 {status.kind !== 'idle' && status.kind !== 'sending' && (
                   <p
                     className={`flex items-start gap-3 rounded-sm p-4 text-sm font-semibold ${
-                      status.kind === 'success' ? 'border-l-4 border-primary bg-primary-soft text-ink' : 'border-l-4 border-ink bg-concrete text-ink'
+                      status.kind === 'success'
+                        ? 'border-l-4 border-primary bg-primary-soft text-ink'
+                        : 'border-l-4 border-ink bg-concrete text-ink'
                     }`}
                   >
                     {status.kind === 'success' ? (
@@ -244,26 +303,16 @@ const Contact = () => {
                 )}
               </div>
 
-              <button type="submit" disabled={status.kind === 'sending'} className={`${btn.primary} w-full disabled:cursor-wait disabled:opacity-70`}>
+              <button
+                type="submit"
+                disabled={status.kind === 'sending'}
+                className={`${btn.primary} w-full disabled:cursor-wait disabled:opacity-70`}
+              >
                 {status.kind === 'sending' ? st.sending : cs.labels.submit}
               </button>
             </form>
-          </motion.div>
-        </div>
-
-        {/* Mapa */}
-        <div className="mt-6 h-80 overflow-hidden border border-line bg-line sm:h-96">
-          <iframe
-            src={contacts.mapUrl}
-            width="100%"
-            height="100%"
-            style={{ border: 0 }}
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            title={cs.mapTitle}
-          />
-        </div>
+          </div>
+        </motion.div>
       </Container>
     </section>
   );

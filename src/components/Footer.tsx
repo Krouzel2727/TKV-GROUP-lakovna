@@ -2,52 +2,39 @@ import { siteData } from '../config/siteData';
 import { Container } from './ui';
 import logo from '../assets/logo_remove_BG.png';
 
+// Patička: logo + divize skupiny, pod čarou původní údaje (©, adresa, IČO, DIČ)
 const Footer = () => {
-  const { footer, contacts, nav, divisions, brand } = siteData;
-  const linkCls = 'text-silver transition-colors hover:text-primary';
+  const { footer, divisions, brand } = siteData;
 
   return (
-    <footer className="border-t-4 border-primary bg-ink text-sm text-silver">
-      <Container className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-12">
-        <div className="lg:col-span-4">
+    <footer className="bg-blueprint border-t-4 border-primary bg-ink text-sm text-silver">
+      <Container className="flex flex-col gap-8 py-12 md:flex-row md:items-center md:justify-between">
+        <a href="/" aria-label={siteData.navbar.homeLabel} className="shrink-0">
           {/* Logo v bílé (monochromní) verzi pro tmavé pozadí */}
-          <img src={logo} alt={siteData.navbar.logoAlt} width={992} height={196} loading="lazy" className="h-9 w-auto brightness-0 invert" />
-          <ul className="mt-6 space-y-2.5">
-            {divisions.map((d) => (
-              <li key={d.brand}>
-                <a href={d.url} aria-current={d.brand === brand ? 'page' : undefined} className={`flex items-center gap-2 ${linkCls}`}>
-                  <span aria-hidden="true" className="h-2 w-2 rounded-full bg-primary" />
-                  {siteData.groupName} · {d.name}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+          <img src={logo} alt={siteData.navbar.logoAlt} width={992} height={196} loading="lazy" className="h-10 w-auto brightness-0 invert" />
+        </a>
 
-        <nav aria-label={siteData.navbar.navLabel} className="lg:col-span-3">
-          <ul className="space-y-2.5">
-            {nav.map((link) => (
-              <li key={link.href}>
-                <a href={link.href} className={`font-display text-lg font-bold uppercase tracking-wide ${linkCls}`}>
-                  {link.label}
-                </a>
-              </li>
-            ))}
+        <nav aria-label={siteData.divisionsLabel}>
+          <ul className="flex flex-wrap gap-3">
+            {divisions.map((d) => {
+              const current = d.brand === brand;
+              return (
+                <li key={d.brand}>
+                  <a
+                    href={d.url}
+                    aria-current={current ? 'page' : undefined}
+                    className={`flex items-center gap-2.5 rounded-sm border px-4 py-2.5 font-display text-base font-bold uppercase tracking-wide transition-colors ${
+                      current ? 'border-primary text-white' : 'border-steel-line text-silver hover:border-primary hover:text-white'
+                    }`}
+                  >
+                    <span aria-hidden="true" className="h-2 w-2 rounded-full bg-primary" />
+                    {siteData.groupName} · {d.name}
+                  </a>
+                </li>
+              );
+            })}
           </ul>
         </nav>
-
-        <address className="space-y-2.5 not-italic lg:col-span-5">
-          <p className="text-white">{contacts.hala1.adres}</p>
-          <p>{contacts.hala1.open}</p>
-          {[contacts.roman, contacts.jakub].map((p) => (
-            <p key={p.name}>
-              <a href={`tel:${p.phone.replace(/\s+/g, '')}`} className={linkCls}>
-                {p.phone}
-              </a>
-              <span> · {p.name}</span>
-            </p>
-          ))}
-        </address>
       </Container>
 
       <div className="border-t border-steel-line">
@@ -56,7 +43,7 @@ const Footer = () => {
             © {new Date().getFullYear()} {footer.text}
           </p>
           <p>
-            {footer.address} · {footer.ico} · {footer.dico}
+            {footer.address} <span aria-hidden="true">·</span> {footer.ico} <span aria-hidden="true">·</span> {footer.dico}
           </p>
         </Container>
       </div>
